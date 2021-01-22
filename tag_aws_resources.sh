@@ -1,21 +1,33 @@
 #!/bin/bash
 
+# Set GLOBAL Variables for configuration files and output file
 AWS_PROFILES_CONF=./aws_profiles.conf
 AWS_TAGS_CONF=./aws_required_tags.conf
 MISSING_TAGS_FILE=./aws_instances_missing_tags.csv
 
-echo > ${MISSING_TAGS_FILE}
+# Read in the conf files into an array
 while read line ; do arrayTagsList[c++]="$line" ; done < <(cat ${AWS_TAGS_CONF})
-while read line ; do arrayAWSProfiles[c++]="$line" ; done < <(cat ${AWS_PROFILES_CONF})
+while read line ; do arrayProfiles[c++]="$line" ; done < <(cat ${AWS_PROFILES_CONF})
+
+# Empty the file used for tracking which instances are missing required tags
+cat /dev/null > ${MISSING_TAGS_FILE}
 
 
-profile=onemata-automation-AutomatedDataManagement
-
-cmdBaseAWS="aws --output=text"
-cmdGetRegions="aws --output=text --query 'regions[*].[name]' --profile $profile lightsail get-regions"
-
-cmdGetInstances="aws  --output=text --query 'Reservations[*].Instances[*].[InstanceId]'  --profile $profile --region \${region} ec2 describe-instances"
-
+# Set variables for running commands in AWS.
+# Not the use of \$ in front of variables to delay evaluating variables
+cmdBaseAWS="aws --output text --profile \$profile --region \$region" 
+cmdGetRegions="$cmdBaseAWS --query 'regions[*].[name]' lightsail get-regions"
+cmdGetInstances="$cmdBaseAWS --query 'Reservations[*].Instances[*].[InstanceId]' \
+               ec2 describe-instances"
+cmdGetInstnaceTags="$cmdBaseAWS --query 'Reservations[*].Instances[*].[Tags]' \
+               ec2 describe-instances --instance-ids \$instanceId"
+cmdGetInstnaceVolumes="$cmdBaseAWS --query 'Reservations[*].Instances[*].BlockDeviceMappings[*].[*.VolumeId]' \
+               ec2 describe-instances --instance-ids \$instanceId"
+cmdGetInstnaceNetworkInterfaces="$cmdBaseAWS --query 'Reservations[*].Instances[*].NetworkInterfaces[*].[NetworkInterfaceId]' \
+               ec2 describe-instances --instance-ids \$instanceId"
+cmdGetOwnerId="$cmdBaseAWS --query 'Reservations[*].[OwnerId]' \
+		       ec2 describe-instances --instance-ids \$instanceId"
+                  
 fUpdateInstanceTags () {
    profile=$1
    region=$2
@@ -24,18 +36,8 @@ fUpdateInstanceTags () {
    unset arrayApplyTags
    unset arrayVolumeIds
    unset arrayNetworkIds
-   cmdGetInstnaceTags="aws  --query 'Reservations[*].Instances[*].[Tags]' --output=text  --profile $profile --region ${region} ec2 describe-instances --instance-ids $instanceId"
-   cmdGetInstnaceVolumes="aws --output=text --profile $profile --region ${region} \
-	               --query 'Reservations[*].Instances[*].BlockDeviceMappings[*].[*.VolumeId]' \
-		       ec2 describe-instances --instance-ids $instanceId"
-   cmdGetInstnaceNetworkInterfaces="aws --output=text --profile $profile --region ${region} \
-	               --query 'Reservations[*].Instances[*].NetworkInterfaces[*].[NetworkInterfaceId]' \
-                       ec2 describe-instances --instance-ids $instanceId"
-   cmdGetOwnerId="aws --output=text --profile $profile --region ${region} \
-	               --query 'Reservations[*].[OwnerId]' \
-		       ec2 describe-instances --instance-ids $instanceId"
-
-   ownerId=`eval $cmdGetOwnerId`
+   
+   ownerId=`eval ${cmdGetOwnerId}`
 
    while read tagKey tagValue; do
 	   arrayTags[c++]="$tagKey"
@@ -71,20 +73,23 @@ fUpdateInstanceTags () {
    aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}
 #   set -
 
-
 }
 
-while read region; do
-   arrayRegions[c++]="$region"
-done < <(eval ${cmdGetRegions})
-
-for region in ${arrayRegions[*]} ; do
-   echo $region
-   #eval echo ${cmdGetInstances}
-   while read instance; do
-      arrayInstances[c++]="$instance"
-      fUpdateInstanceTags $profile $region $instance
-#      echo ${arrayInstances[*]}
-   done < <(eval ${cmdGetInstances})
-#   eval ${cmdGetInstances}
+# Loop through each profile (AWS Account)
+for profile in ${arrayProfiles[*]} ; do
+    # Get list of regions
+    # Set a default region for this command to get the list of all regions
+    region=us-east-1
+    while read region; do arrayRegions[c++]="$region" ; done < <(eval ${cmdGetRegions})
+    # Loop through each region looking for EC2 instances
+    for region in ${arrayRegions[*]} ; do
+        #eval echo ${cmdGetInstances}
+        while read instance; do
+            # Call function to scan for instances and update tags
+            fUpdateInstanceTags $profile $region $instance
+        done < <(eval ${cmdGetInstances})
+    done
 done
+  
+
+
