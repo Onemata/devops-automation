@@ -1,5 +1,13 @@
 #!/bin/bash
 
+AWS_PROFILES_CONF=./aws_profiles.conf
+AWS_TAGS_CONF=./aws_required_tags.conf
+MISSING_TAGS_FILE=./aws_instances_missing_tags.csv
+
+echo > ${MISSING_TAGS_FILE}
+while read line ; do arrayTagsList[c++]="$line" ; done < <(cat ${AWS_TAGS_CONF})
+while read line ; do arrayAWSProfiles[c++]="$line" ; done < <(cat ${AWS_PROFILES_CONF})
+
 
 profile=onemata-automation-AutomatedDataManagement
 
@@ -17,11 +25,17 @@ fUpdateInstanceTags () {
    unset arrayVolumeIds
    unset arrayNetworkIds
    cmdGetInstnaceTags="aws  --query 'Reservations[*].Instances[*].[Tags]' --output=text  --profile $profile --region ${region} ec2 describe-instances --instance-ids $instanceId"
-   cmdGetInstnaceVolumes="aws  --query 'Reservations[*].Instances[*].BlockDeviceMappings[*].[*.VolumeId]' --output=text  --profile $profile --region ${region} ec2 describe-instances --instance-ids $instanceId"
-#   cmdGetInstnaceVolumes="aws  --query 'Reservations[*].Instances[*].[BlockDeviceMappings]' --output=json  --profile $profile --region ${region} ec2 describe-instances --instance-ids $instanceId"
+   cmdGetInstnaceVolumes="aws --output=text --profile $profile --region ${region} \
+	               --query 'Reservations[*].Instances[*].BlockDeviceMappings[*].[*.VolumeId]' \
+		       ec2 describe-instances --instance-ids $instanceId"
    cmdGetInstnaceNetworkInterfaces="aws --output=text --profile $profile --region ${region} \
 	               --query 'Reservations[*].Instances[*].NetworkInterfaces[*].[NetworkInterfaceId]' \
                        ec2 describe-instances --instance-ids $instanceId"
+   cmdGetOwnerId="aws --output=text --profile $profile --region ${region} \
+	               --query 'Reservations[*].[OwnerId]' \
+		       ec2 describe-instances --instance-ids $instanceId"
+
+   ownerId=`eval $cmdGetOwnerId`
 
    while read tagKey tagValue; do
 	   arrayTags[c++]="$tagKey"
@@ -29,6 +43,22 @@ fUpdateInstanceTags () {
 #	   echo "${arrayApplyTags[*]}"
 #	   echo "${arrayTags[*]}"
    done < <(eval ${cmdGetInstnaceTags})
+
+   # Loop through the list of required tags to make sure all tags are present on the instance
+   for tagRequired in ${arrayTagsList[*]} ; do
+        tagFound=false
+	for tagExisting in ${arrayTags[*]} ; do
+            if [[ "$tagRequired" == "$tagExisting" ]] ; then
+               tagFound=true
+	       return
+            else
+               tagFound=false
+            fi
+	done
+	if [[ $tagFound == "false" ]] ; then
+            echo "$ownerId,$region,$instanceId,$tagRequired" >> ${MISSING_TAGS_FILE}
+	fi
+   done
 
    while read volumeId ; do
 	   arrayVolumeIds[c++]="$volumeId"
