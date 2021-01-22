@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 profile=onemata-automation-AutomatedDataManagement
 
 cmdBaseAWS="aws --output=text"
