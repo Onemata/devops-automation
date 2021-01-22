@@ -58,7 +58,7 @@ fUpdateInstanceTags () {
             fi
 	done
 	if [[ $tagFound == "false" ]] ; then
-            echo "$ownerId,$region,$instanceId,$tagRequired" >> ${MISSING_TAGS_FILE}
+            echo "\'$ownerId\',$region,$instanceId,$tagRequired" >> ${MISSING_TAGS_FILE}
 	fi
    done
 
