@@ -39,7 +39,7 @@ fUpdateInstanceTags () {
 
    ownerId=`eval ${cmdGetOwnerId}`
    eval echo "======================================================"
-   eval echo "----- Account: $onwerId - $region - Instance: $instanceId "
+   echo "----- Account: $ownerId - $region - Instance: $instanceId "
 
    while read tagKey tagValue; do
        # Check to see if the tagKey is an AWS reserved key and ignore those
@@ -73,6 +73,7 @@ fUpdateInstanceTags () {
        fi
    done
 
+set -x
    while read volumeId ; do
        arrayVolumeIds[c++]="$volumeId"
    done < <(eval ${cmdGetInstnaceVolumes})
@@ -80,17 +81,17 @@ fUpdateInstanceTags () {
    while read networkId ; do
        arrayNetworkIds[c++]="$networkId"
    done < <(eval ${cmdGetInstnaceNetworkInterfaces})
-   
-   echo "Applying Tags to attached resources"
-   echo "Resources: ${arrayVolumeIds[*]} ${arrayNetworkIds[*]}"
+set -
+
+   echo "Attached resources: ${arrayVolumeIds[*]} ${arrayNetworkIds[*]}"
    
    if [ ${#arrayApplyTags[@]} -eq 0 ]; then
         echo "No tags to apply to resources"
     else
         echo "Tags: ${arrayApplyTags[*]}"
-#        set -x
+        set -x
         aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}
-#        set -
+        set -
     fi
 }
 
