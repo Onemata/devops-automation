@@ -44,7 +44,9 @@ fUpdateInstanceTags () {
    while read tagKey tagValue; do
        # Check to see if the tagKey is an AWS reserved key and ignore those
 #       echo "Found Tag: $tagKey"
-       if [[ $tagKey =~ ^aws: ]]; then
+       if [[ $tagKey == "None" ]]; then
+           echo "This instance has no tags"
+       elif [[ $tagKey =~ ^aws: ]]; then
            echo "Ignoring Tag: $tagKey"
        else
            echo "Valid Tag: $tagKey"
@@ -54,6 +56,7 @@ fUpdateInstanceTags () {
 #           echo "${arrayTags[*]}"
        fi
    done < <(eval ${cmdGetInstnaceTags})
+   
    eval echo "Tags: ${arrayApplyTags[*]}"
 
    # Loop through the list of required tags to make sure all tags are present on the instance
