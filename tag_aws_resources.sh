@@ -15,7 +15,7 @@ cat /dev/null > ${MISSING_TAGS_FILE}
 
 # Set variables for running commands in AWS.
 # Not the use of \$ in front of variables to delay evaluating variables
-cmdBaseAWS="aws --output text --profile \$profile --region \$region" 
+cmdBaseAWS="aws --output text --profile \$profile --region \$region"
 cmdGetRegions="$cmdBaseAWS --query 'regions[*].[name]' lightsail get-regions"
 cmdGetInstances="$cmdBaseAWS --query 'Reservations[*].Instances[*].[InstanceId]' \
                ec2 describe-instances"
@@ -26,8 +26,8 @@ cmdGetInstnaceVolumes="$cmdBaseAWS --query 'Reservations[*].Instances[*].BlockDe
 cmdGetInstnaceNetworkInterfaces="$cmdBaseAWS --query 'Reservations[*].Instances[*].NetworkInterfaces[*].[NetworkInterfaceId]' \
                ec2 describe-instances --instance-ids \$instanceId"
 cmdGetOwnerId="$cmdBaseAWS --query 'Reservations[*].[OwnerId]' \
-		       ec2 describe-instances --instance-ids \$instanceId"
-                  
+               ec2 describe-instances --instance-ids \$instanceId"
+
 fUpdateInstanceTags () {
    profile=$1
    region=$2
@@ -36,41 +36,43 @@ fUpdateInstanceTags () {
    unset arrayApplyTags
    unset arrayVolumeIds
    unset arrayNetworkIds
-   
+
    ownerId=`eval ${cmdGetOwnerId}`
 
    while read tagKey tagValue; do
        # Check to see if the tagKey is an AWS reserved key and ignore those
        if [[ ! $tagKey =~ ^aws: ]]; then
-	       arrayTags[c++]="$tagKey"
-	       arrayApplyTags[c++]=Key=$tagKey,Value=\"$tagValue\"
-	       echo "${arrayApplyTags[*]}"
-#	       echo "${arrayTags[*]}"
+           arrayTags[c++]="$tagKey"
+           arrayApplyTags[c++]=Key=$tagKey,Value=\"$tagValue\"
+#           echo "${arrayApplyTags[*]}"
+#           echo "${arrayTags[*]}"
        fi
    done < <(eval ${cmdGetInstnaceTags})
+   eval echo "Instance: \$instanceId"
+   eval echo "      Tags: ${arrayApplyTags[*]}"
 
    # Loop through the list of required tags to make sure all tags are present on the instance
    for tagRequired in ${arrayTagsList[*]} ; do
-        tagFound=false
-	for tagExisting in ${arrayTags[*]} ; do
-            if [[ "$tagRequired" == "$tagExisting" ]] ; then
+       tagFound=false
+       for tagFound in ${arrayTags[*]} ; do
+           if [[ "$tagRequired" == "$tagFound" ]] ; then
                tagFound=true
-	       return
-            else
+               return
+           else
                tagFound=false
-            fi
-	done
-	if [[ $tagFound == "false" ]] ; then
-            echo "\'$ownerId\',$region,$instanceId,$tagRequired" >> ${MISSING_TAGS_FILE}
-	fi
+           fi
+       done
+       if [[ $tagFound == "false" ]] ; then
+           echo "\'$ownerId\',$region,$instanceId,$tagRequired" >> ${MISSING_TAGS_FILE}
+       fi
    done
 
    while read volumeId ; do
-	   arrayVolumeIds[c++]="$volumeId"
+       arrayVolumeIds[c++]="$volumeId"
    done < <(eval ${cmdGetInstnaceVolumes})
 
    while read networkId ; do
-	   arrayNetworkIds[c++]="$networkId"
+       arrayNetworkIds[c++]="$networkId"
    done < <(eval ${cmdGetInstnaceNetworkInterfaces})
    set -x
    aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}
@@ -93,6 +95,6 @@ for profile in ${arrayProfiles[*]} ; do
         done < <(eval ${cmdGetInstances})
     done
 done
-  
+
 
 
