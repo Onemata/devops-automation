@@ -48,8 +48,8 @@ fUpdateInstanceTags () {
 #           echo "${arrayTags[*]}"
        fi
    done < <(eval ${cmdGetInstnaceTags})
-   eval echo "Instance: \$instanceId"
-   eval echo "      Tags: ${arrayApplyTags[*]}"
+   eval echo "============ Instance: $instanceId =================="
+   eval echo "\tTags: ${arrayApplyTags[*]}"
 
    # Loop through the list of required tags to make sure all tags are present on the instance
    for tagRequired in ${arrayTagsList[*]} ; do
@@ -63,7 +63,8 @@ fUpdateInstanceTags () {
            fi
        done
        if [[ $tagFound == "false" ]] ; then
-           echo "\'$ownerId\',$region,$instanceId,$tagRequired" >> ${MISSING_TAGS_FILE}
+           echo "\'$ownerId,$region,$instanceId,$tagRequired" >> ${MISSING_TAGS_FILE}
+           echo "$ownerId,$region,$instanceId,$tagRequired"
        fi
    done
 
@@ -74,9 +75,13 @@ fUpdateInstanceTags () {
    while read networkId ; do
        arrayNetworkIds[c++]="$networkId"
    done < <(eval ${cmdGetInstnaceNetworkInterfaces})
-   set -x
+   
+   echo "Applying Tags to attached resources"
+   echo "Resources: ${arrayVolumeIds[*]} ${arrayNetworkIds[*]}"
+   echo "Tags: ${arrayApplyTags[*]}"
+#   set -x
    aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}
-   set -
+#   set -
 
 }
 
