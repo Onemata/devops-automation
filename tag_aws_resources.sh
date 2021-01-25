@@ -38,7 +38,7 @@ fUpdateInstanceTags () {
    unset arrayNetworkIds
 
    ownerId=`eval ${cmdGetOwnerId}`
-   eval echo "======================================================"
+   eval echo "=========================================================================="
    echo "----- Account: $ownerId - $region - Instance: $instanceId "
 
    while read tagKey tagValue; do
@@ -60,12 +60,13 @@ fUpdateInstanceTags () {
    eval echo "Tags: ${arrayApplyTags[*]}"
 
    # Loop through the list of required tags to make sure all tags are present on the instance
+
    for tagRequired in ${arrayTagsList[*]} ; do
        tagFound=false
        for tagFound in ${arrayTags[*]} ; do
            if [[ "$tagRequired" == "$tagFound" ]] ; then
                tagFound=true
-               return
+               break
            else
                tagFound=false
            fi
@@ -76,7 +77,6 @@ fUpdateInstanceTags () {
        fi
    done
 
-set -x
    while read volumeId ; do
        arrayVolumeIds[c++]="$volumeId"
    done < <(eval ${cmdGetInstnaceVolumes})
@@ -84,7 +84,7 @@ set -x
    while read networkId ; do
        arrayNetworkIds[c++]="$networkId"
    done < <(eval ${cmdGetInstnaceNetworkInterfaces})
-set -
+
 
    echo "Attached resources: ${arrayVolumeIds[*]} ${arrayNetworkIds[*]}"
    
