@@ -44,7 +44,7 @@ fUpdateInstanceTags () {
        if [[ ! $tagKey =~ ^aws: ]]; then
 	       arrayTags[c++]="$tagKey"
 	       arrayApplyTags[c++]=Key=$tagKey,Value=\"$tagValue\"
-#	       echo "${arrayApplyTags[*]}"
+	       echo "${arrayApplyTags[*]}"
 #	       echo "${arrayTags[*]}"
        fi
    done < <(eval ${cmdGetInstnaceTags})
