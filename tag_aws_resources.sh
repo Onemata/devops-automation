@@ -91,7 +91,7 @@ fUpdateInstanceTags () {
 #        set -x
         aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}
 #        set -
-
+    fi
 }
 
 # Loop through each profile (AWS Account)
