@@ -40,10 +40,13 @@ fUpdateInstanceTags () {
    ownerId=`eval ${cmdGetOwnerId}`
 
    while read tagKey tagValue; do
-	   arrayTags[c++]="$tagKey"
-	   arrayApplyTags[c++]=Key=$tagKey,Value=\"$tagValue\"
-#	   echo "${arrayApplyTags[*]}"
-#	   echo "${arrayTags[*]}"
+       # Check to see if the tagKey is an AWS reserved key and ignore those
+       if [[ ! $tagKey =~ ^aws: ]]; then
+	       arrayTags[c++]="$tagKey"
+	       arrayApplyTags[c++]=Key=$tagKey,Value=\"$tagValue\"
+#	       echo "${arrayApplyTags[*]}"
+#	       echo "${arrayTags[*]}"
+       fi
    done < <(eval ${cmdGetInstnaceTags})
 
    # Loop through the list of required tags to make sure all tags are present on the instance
