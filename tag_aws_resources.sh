@@ -90,7 +90,12 @@ fUpdateInstanceTags () {
 
    echo "Attached resources: ${arrayVolumeIds[*]} ${arrayNetworkIds[*]}"
    
-   aws --profile $profile --region ${region} ec2 delete-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags Key=None
+   #----------------------------------------------
+   # This section can be used to remove tags
+   #    To remove a tag from
+   #    Instance, Volumes, and Network interfaces
+   # ----------------------------------------------
+   #aws --profile $profile --region ${region} ec2 delete-tags --resources $instanceId ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags Key=None
    
    if [ ${#arrayApplyTags[@]} -eq 0 ]; then
         echo "No tags to apply to resources"
