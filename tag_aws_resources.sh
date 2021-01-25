@@ -47,9 +47,9 @@ fUpdateInstanceTags () {
        if [[ $tagKey == "None" ]]; then
            echo "This instance has no tags"
        elif [[ $tagKey =~ ^aws: ]]; then
-           echo "Ignoring Tag: $tagKey"
+           echo "Reserved Tag: $tagKey"
        else
-           echo "Valid Tag: $tagKey"
+           echo "Valid Tag:    $tagKey"
            arrayTags[c++]="$tagKey"
            arrayApplyTags[c++]=Key=$tagKey,Value=\"$tagValue\"
 #           echo "${arrayApplyTags[*]}"
@@ -57,7 +57,9 @@ fUpdateInstanceTags () {
        fi
    done < <(eval ${cmdGetInstnaceTags})
    
-   eval echo "Tags: ${arrayApplyTags[*]}"
+   if [ ${#arrayApplyTags[@]} -gt 0 ]; then
+       echo "Tags: ${arrayApplyTags[*]}"
+   fi
 
    # Loop through the list of required tags to make sure all tags are present on the instance
 
