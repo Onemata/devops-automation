@@ -38,6 +38,8 @@ fUpdateInstanceTags () {
    unset arrayNetworkIds
 
    ownerId=`eval ${cmdGetOwnerId}`
+   eval echo "======================================================"
+   eval echo "----- Account: $onwerId - $region - Instance: $instanceId "
 
    while read tagKey tagValue; do
        # Check to see if the tagKey is an AWS reserved key and ignore those
@@ -52,9 +54,7 @@ fUpdateInstanceTags () {
 #           echo "${arrayTags[*]}"
        fi
    done < <(eval ${cmdGetInstnaceTags})
-   eval echo "======================================================"
-   eval echo "----- Instance: $instanceId "
-   eval echo "\tTags: ${arrayApplyTags[*]}"
+   eval echo "Tags: ${arrayApplyTags[*]}"
 
    # Loop through the list of required tags to make sure all tags are present on the instance
    for tagRequired in ${arrayTagsList[*]} ; do
@@ -69,7 +69,7 @@ fUpdateInstanceTags () {
        done
        if [[ $tagFound == "false" ]] ; then
            echo "\'$ownerId,$region,$instanceId,$tagRequired" >> ${MISSING_TAGS_FILE}
-           echo "$ownerId,$region,$instanceId,$tagRequired"
+           echo "Missing required tag: $tagRequired"
        fi
    done
 
@@ -83,10 +83,14 @@ fUpdateInstanceTags () {
    
    echo "Applying Tags to attached resources"
    echo "Resources: ${arrayVolumeIds[*]} ${arrayNetworkIds[*]}"
-   echo "Tags: ${arrayApplyTags[*]}"
-#   set -x
-   aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}
-#   set -
+   
+   if [ ${#arrayApplyTags[@]} -eq 0 ]; then
+        echo "No tags to apply to resources"
+    else
+        echo "Tags: ${arrayApplyTags[*]}"
+#        set -x
+        aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}
+#        set -
 
 }
 
