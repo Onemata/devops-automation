@@ -41,7 +41,11 @@ fUpdateInstanceTags () {
 
    while read tagKey tagValue; do
        # Check to see if the tagKey is an AWS reserved key and ignore those
-       if [[ ! $tagKey =~ ^aws: ]]; then
+#       echo "Found Tag: $tagKey"
+       if [[ $tagKey =~ ^aws: ]]; then
+           echo "Ignoring Tag: $tagKey"
+       else
+           echo "Valid Tag: $tagKey"
            arrayTags[c++]="$tagKey"
            arrayApplyTags[c++]=Key=$tagKey,Value=\"$tagValue\"
 #           echo "${arrayApplyTags[*]}"
