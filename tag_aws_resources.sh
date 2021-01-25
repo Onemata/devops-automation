@@ -72,9 +72,9 @@ fUpdateInstanceTags () {
    while read networkId ; do
 	   arrayNetworkIds[c++]="$networkId"
    done < <(eval ${cmdGetInstnaceNetworkInterfaces})
-#   set -x
+   set -x
    aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}
-#   set -
+   set -
 
 }
 
