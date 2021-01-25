@@ -52,7 +52,8 @@ fUpdateInstanceTags () {
 #           echo "${arrayTags[*]}"
        fi
    done < <(eval ${cmdGetInstnaceTags})
-   eval echo "============ Instance: $instanceId =================="
+   eval echo "======================================================"
+   eval echo "----- Instance: $instanceId "
    eval echo "\tTags: ${arrayApplyTags[*]}"
 
    # Loop through the list of required tags to make sure all tags are present on the instance
