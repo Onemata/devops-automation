@@ -51,7 +51,7 @@ fUpdateInstanceTags () {
        else
            echo "Valid Tag:    $tagKey"
            arrayTags[c++]="$tagKey"
-           arrayApplyTags[c++]=Key=\"$tagKey\",Value=\"$tagValue\"
+           arrayApplyTags[c++]=Key=\'$tagKey\',Value=\'$tagValue\'
 #           echo "${arrayApplyTags[*]}"
 #           echo "${arrayTags[*]}"
        fi
@@ -104,6 +104,10 @@ fUpdateInstanceTags () {
         cmdApplyTags="aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}"
         eval echo "$cmdApplyTags"
         eval $cmdApplyTags
+        returnCode=$?
+        if [[ $returnCode -ne 0 ]]; then
+            exit 1
+        fi
         #aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}
     fi
 }
