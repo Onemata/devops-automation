@@ -51,7 +51,7 @@ fUpdateInstanceTags () {
        else
            echo "Valid Tag:    $tagKey"
            arrayTags[c++]="$tagKey"
-           arrayApplyTags[c++]=Key=\'$tagKey\',Value=\'$tagValue\'
+           arrayApplyTags[c++]=\'Key=\"$tagKey\",Value=\"$tagValue\"\'
 #           echo "${arrayApplyTags[*]}"
 #           echo "${arrayTags[*]}"
        fi
