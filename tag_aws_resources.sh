@@ -100,7 +100,7 @@ fUpdateInstanceTags () {
    if [ ${#arrayApplyTags[@]} -eq 0 ]; then
         echo "No tags to apply to resources"
     else
-        echo "Tags: ${arrayApplyTags[*]}"
+        #echo "Tags: ${arrayApplyTags[*]}"
         cmdApplyTags="aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}"
         echo "$cmdApplyTags"
         $cmdApplyTags
