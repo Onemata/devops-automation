@@ -104,7 +104,7 @@ fUpdateInstanceTags () {
         cmdApplyTags="aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}"
         #echo "$cmdApplyTags"
         set -x
-        $cmdApplyTags
+        eval $cmdApplyTags
         returnCode=$?
         set -
         if [[ $returnCode -ne 0 ]]; then
