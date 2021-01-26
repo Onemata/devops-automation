@@ -102,8 +102,8 @@ fUpdateInstanceTags () {
     else
         echo "Tags: ${arrayApplyTags[*]}"
         cmdApplyTags="aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}"
-        eval echo "$cmdApplyTags"
-        eval $cmdApplyTags
+        echo "$cmdApplyTags"
+        $cmdApplyTags
         returnCode=$?
         if [[ $returnCode -ne 0 ]]; then
             exit 1
