@@ -41,7 +41,7 @@ fUpdateInstanceTags () {
    eval echo "=========================================================================="
    echo "----- Account: $ownerId - $region - Instance: $instanceId "
 
-   while read tagKey tagValue; do
+   while IFS=$'\t' read -r tagKey tagValue; do
        # Check to see if the tagKey is an AWS reserved key and ignore those
 #       echo "Found Tag: $tagKey"
        if [[ $tagKey == "None" ]]; then
