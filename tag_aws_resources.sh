@@ -102,8 +102,9 @@ fUpdateInstanceTags () {
     else
         echo "Tags: ${arrayApplyTags[*]}"
         cmdApplyTags="aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}"
-        echo "$cmdApplyTags"
-        aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}
+        eval echo "$cmdApplyTags"
+        eval $cmdApplyTags
+        #aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}
     fi
 }
 
