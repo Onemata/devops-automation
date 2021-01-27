@@ -117,6 +117,7 @@ fUpdateInstanceTags () {
 
 # Loop through each profile (AWS Account)
 for profile in ${arrayProfiles[*]} ; do
+    echo "Starting profile: $profile"
     # Get list of regions
     # Set a default region for this command to get the list of all regions
     region=us-east-1
