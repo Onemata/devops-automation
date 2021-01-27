@@ -36,6 +36,7 @@ fUpdateInstanceTags () {
    unset arrayApplyTags
    unset arrayVolumeIds
    unset arrayNetworkIds
+   unset arrayResourceIds
 
    ownerId=`eval ${cmdGetOwnerId}`
    eval echo "=========================================================================="
@@ -80,15 +81,17 @@ fUpdateInstanceTags () {
    done
 
    while read volumeId ; do
-       arrayVolumeIds[c++]="$volumeId"
+       arrayResourceIds[c++]="$volumeId"
    done < <(eval ${cmdGetInstnaceVolumes})
 
    while read networkId ; do
-       arrayNetworkIds[c++]="$networkId"
+       arrayResourceIds[c++]="$networkId"
    done < <(eval ${cmdGetInstnaceNetworkInterfaces})
 
-
-   echo "Attached resources: ${arrayVolumeIds[*]} ${arrayNetworkIds[*]}"
+#   if [ ${#arrayVolumeIds[@]} -ne 0 ]; then
+#       arrayResourceIds=("${arrayVolumeIds[@]}")
+#   fi
+#
    
    #----------------------------------------------
    # This section can be used to remove tags
@@ -97,11 +100,14 @@ fUpdateInstanceTags () {
    # ----------------------------------------------
    #aws --profile $profile --region ${region} ec2 delete-tags --resources $instanceId ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags Key=None
    
-   if [ ${#arrayApplyTags[@]} -eq 0 ]; then
+    if [ ${#arrayApplyTags[@]} -eq 0 ]; then
         echo "No tags to apply to resources"
+    elif [ ${#arrayResourceIds[@]} -eq 0 ]; then
+        echo "No resources attached to EC2 instance"
     else
+        #echo "Attached resources: ${arrayResourceIds[*]}
         #echo "Tags: ${arrayApplyTags[*]}"
-        cmdApplyTags="aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayVolumeIds[*]} ${arrayNetworkIds[*]} --tags ${arrayApplyTags[*]}"
+        cmdApplyTags="aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayResourceIds[*]} --tags ${arrayApplyTags[*]}"
         echo $cmdApplyTags
         #set -x
         eval $cmdApplyTags
