@@ -52,14 +52,14 @@ fUpdateInstanceTags () {
        else
            echo "Valid Tag:    $tagKey"
            arrayTags[c++]="$tagKey"
-           arrayApplyTags[c++]=\'Key=\"$tagKey\",Value=\"$tagValue\"\'
+           arrayApplyTags[c++]=Key=\"$tagKey\",Value=\"$tagValue\"
 #           echo "${arrayApplyTags[*]}"
 #           echo "${arrayTags[*]}"
        fi
    done < <(eval ${cmdGetInstnaceTags})
    
    if [ ${#arrayApplyTags[@]} -gt 0 ]; then
-       echo "Tags: ${arrayApplyTags[*]}"
+       echo "Tags: ${arrayApplyTags[@]}"
    fi
 
    # Loop through the list of required tags to make sure all tags are present on the instance
@@ -107,7 +107,7 @@ fUpdateInstanceTags () {
     else
         #echo "Attached resources: ${arrayResourceIds[*]}
         #echo "Tags: ${arrayApplyTags[*]}"
-        cmdApplyTags="aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayResourceIds[*]} --tags ${arrayApplyTags[*]}"
+        cmdApplyTags="aws --profile $profile --region ${region} ec2 create-tags --resources ${arrayResourceIds[*]} --tags ${arrayApplyTags[@]}"
         echo $cmdApplyTags
         #set -x
         eval $cmdApplyTags
