@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # Set GLOBAL Variables for configuration files and output file
 AWS_PROFILES_CONF=./aws_profiles.conf
 
