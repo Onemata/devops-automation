@@ -12,7 +12,7 @@ CSV_FILE=./aws_s3_bucket_report.csv
 # Read in the conf files into an array
 while read line ; do arrayProfiles[c++]="$line" ; done < <(cat ${AWS_PROFILES_CONF})
 
-echo "Account,Bucket Name,Creation Date,Last Modified,Location,Size,Size Readable,Objects,Is Public,Ignore Public ACLS,Block Public Policy,Block Public ACLS,Restrict Public Buckets,Lifecycle Policy" > $CSV_FILE
+echo -e "Account\tBucket Name\tCreation Date\tLast Modified\tLocation\tSize\tSize Readable\tObjects\tIs Public\tIgnore Public ACLS\tBlock Public Policy\tBlock Public ACLS\tRestrict Public Buckets\tLifecycle Policy" > $CSV_FILE
 
 fGenerateBucketReport () {
     AWS_PROFILE=$1
