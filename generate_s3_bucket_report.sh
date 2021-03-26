@@ -5,6 +5,13 @@
 AWS_PROFILES_CONF=./aws_profiles.conf
 
 AWS_PROFILE="onemata-automation-Feeds"
+        BOLD='\033[1m'
+        NORMAL='\033[0m'
+        RED='\033[0;31m'
+        GREEN='\033[0;32m'
+        BLUE='\033[0,34m'
+        NC='\033[0m'
+
 
 CSV_FILE=./aws_s3_bucket_report.csv
 > $CSV_FILE
@@ -52,11 +59,7 @@ fGenerateBucketReport () {
             awsBucketSizeReadable=`perl -e "printf('%.2f', ${awsBucketSize}/1024)"`" KB"
         fi
 
-        BOLD='\033[1m'
-        NORMAL='\033[0m'
-        RED='\033[0;31m'
-        NC='\033[0m'
-        echo -e "  ${BOLD}${awsBucket}${NORMAL}"
+        echo -e "  Bucket: ${BOLD}${awsBucket}${NORMAL}"
         echo -e "\t  Objects:   ${awsBucketObjects}"
         if [[ -n ${awsBucketSizeReadable} ]] ;    then echo -e "\t  Size:      ${awsBucketSizeReadable}" ; fi
         if [[ -n ${awsBucketPolicy} ]]       ;    then echo -e "\t  Policy:    ${awsBucketPolicy:+True}" ; fi
@@ -73,7 +76,7 @@ for profile in ${arrayProfiles[*]} ; do
     accountId=`aws --profile ${profile} sts get-caller-identity --query Account --output text`
     accountName=${profile#onemata-automation-}
     echo "============================================================="
-    echo "Starting profile: $profile for $accountId"
+    echo -e "Starting profile: ${GREEN}${BOLD}${profile}${NORMAL} for ${BOLD}${BLUE}${accountId}${NORMAL}"
     # Call function to generate bucket report for specified profile
     fGenerateBucketReport $profile $accountId $accountName
 done
