@@ -52,7 +52,7 @@ fGenerateBucketReport () {
             awsBucketSizeReadable=`perl -e "printf('%.2f', ${awsBucketSize}/1024)"`" KB"
         fi
 
-        echo -e "\tBucket: ${awsBucket}"
+        echo -e "  Bucket: ${awsBucket}"
         echo -e "\t  Size:      ${awsBucketSizeReadable}"
         echo -e "\t  Objects:   ${awsBucketObjects}"
         echo -e "\t  Policy:    ${awsBucketPolicy:+True}"
@@ -67,6 +67,7 @@ fGenerateBucketReport () {
 for profile in ${arrayProfiles[*]} ; do
     accountId=`aws --profile ${profile} sts get-caller-identity --query Account --output text`
     accountName=${profile#onemata-automation-}
+    echo "============================================================="
     echo "Starting profile: $profile for $accountId"
     # Call function to generate bucket report for specified profile
     fGenerateBucketReport $profile $accountId $accountName
