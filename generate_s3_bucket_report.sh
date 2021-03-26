@@ -12,11 +12,12 @@ CSV_FILE=./aws_s3_bucket_report.csv
 # Read in the conf files into an array
 while read line ; do arrayProfiles[c++]="$line" ; done < <(cat ${AWS_PROFILES_CONF})
 
-echo -e "Account\tBucket Name\tCreation Date\tLast Modified\tLocation\tSize\tSize Readable\tObjects\tIs Public\tIgnore Public ACLS\tBlock Public Policy\tBlock Public ACLS\tRestrict Public Buckets\tLifecycle Policy" > $CSV_FILE
+echo -e "Account\tAccount Name\tBucket Name\tCreation Date\tLast Modified\tLocation\tSize\tSize Readable\tObjects\tIs Public\tIgnore Public ACLS\tBlock Public Policy\tBlock Public ACLS\tRestrict Public Buckets\tPolicy\tLifecycle Policy" > $CSV_FILE
 
 fGenerateBucketReport () {
     AWS_PROFILE=$1
-    awsAccount=`aws --profile ${AWS_PROFILE} sts get-caller-identity --query Account --output text`
+    awsAccount=$2
+    awsAccountName=$3
 
     while read awsBucketCreationDate awsBucket other
     do
@@ -27,8 +28,9 @@ fGenerateBucketReport () {
         awsBucketLocation=`aws --profile ${AWS_PROFILE} s3api get-bucket-location --bucket ${awsBucket} --output text`
         if [[ ${awsBucketLocation} == 'null' ]] ; then awsBucketLocation='us-east-1' ; fi
         awsBucketLifecyclePolicy=`aws --profile ${AWS_PROFILE}  s3api get-bucket-lifecycle-configuration  --bucket ${awsBucket} 2> /dev/null | jq . -c`
+        awsBucketPolicy=`aws --profile ${AWS_PROFILE}  s3api get-bucket-policy  --bucket ${awsBucket} 2> /dev/null | jq . -c`
         awsBucketIsPublic=`aws --profile ${AWS_PROFILE}  s3api get-bucket-policy-status --query PolicyStatus --bucket ${awsBucket} --output text 2> /dev/null`
-        awsBucketIsPublic=${awsBucketIsPublic:="False"}
+        awsBucketIsPublic=${awsBucketIsPublic:-"False"}
         read awsIgnorePublicAcls awsBlockPublicPolicy awsBlockPublicAcls awsRestrictPublicBuckets < <(aws --profile ${AWS_PROFILE} s3api get-public-access-block --bucket ${awsBucket} --query PublicAccessBlockConfiguration --output text 2> /dev/null)
         read awsBucketLastModified < <(aws --profile ${AWS_PROFILE} s3api list-objects-v2 --bucket ${awsBucket} --query 'sort_by(Contents, &LastModified)[-1].LastModified' --output=text 2> /dev/null)
         awsBucketSize=0
@@ -50,15 +52,22 @@ fGenerateBucketReport () {
             awsBucketSizeReadable=`perl -e "printf('%.2f', ${awsBucketSize}/1024)"`" KB"
         fi
 
-        echo -e "${awsAccount}\t${awsBucket}\t${awsBucketCreationDate}\t${awsBucketLastModified}\t${awsBucketLocation}\t${awsBucketSize}\t${awsBucketSizeReadable}\t${awsBucketObjects}\t${awsBucketIsPublic}\t${awsIgnorePublicAcls}\t${awsBlockPublicPolicy}\t${awsBlockPublicAcls}\t${awsRestrictPublicBuckets}"
-        echo -e "${awsAccount}\t${awsBucket}\t${awsBucketCreationDate}\t${awsBucketLastModified}\t${awsBucketLocation}\t${awsBucketSize}\t${awsBucketSizeReadable}\t${awsBucketObjects}\t${awsBucketIsPublic}\t${awsIgnorePublicAcls}\t${awsBlockPublicPolicy}\t${awsBlockPublicAcls}\t${awsRestrictPublicBuckets}\t${awsBucketLifecyclePolicy}" >> $CSV_FILE
+        echo -e "\tBucket: ${awsBucket}"
+        echo -e "\t\t\tSize:    ${awsBucketSizeReadable}"
+        echo -e "\t\t\tObjects: ${awsBucketObjets}"
+        echo -e "\t\t\tPolicy:  ${awsBucketPolicy:+True}"
+        echo -e "\t\t\tLifecycle: ${awsBucketLifecyclePolicy:+True}"
+#        echo -e "${awsAccount}\t${awsAccountName}\t${awsBucket}\t${awsBucketCreationDate}\t${awsBucketLastModified}\t${awsBucketLocation}\t${awsBucketSize}\t${awsBucketSizeReadable}\t${awsBucketObjects}\t${awsBucketIsPublic}\t${awsIgnorePublicAcls}\t${awsBlockPublicPolicy}\t${awsBlockPublicAcls}\t${awsRestrictPublicBuckets}"
+        echo -e "${awsAccount}\t${awsAccountName}\t${awsBucket}\t${awsBucketCreationDate}\t${awsBucketLastModified}\t${awsBucketLocation}\t${awsBucketSize}\t${awsBucketSizeReadable}\t${awsBucketObjects}\t${awsBucketIsPublic}\t${awsIgnorePublicAcls}\t${awsBlockPublicPolicy}\t${awsBlockPublicAcls}\t${awsRestrictPublicBuckets}\t${awsBucketPolicy}\t${awsBucketLifecyclePolicy}" >> $CSV_FILE
 
     done < <(aws --profile ${AWS_PROFILE} s3api list-buckets --query 'Buckets[*].{"Name": Name, "CreationDate": CreationDate}' --output text)
 }
 
 # Loop through each profile (AWS Account)
 for profile in ${arrayProfiles[*]} ; do
-    echo "Starting profile: $profile"
+    accountId=`aws --profile ${profile} sts get-caller-identity --query Account --output text`
+    accountName=${profile#onemata-automation-}
+    echo "Starting profile: $profile for $accountId"
     # Call function to generate bucket report for specified profile
-    fGenerateBucketReport $profile
+    fGenerateBucketReport $profile $accountId $accountName
 done
