@@ -53,10 +53,10 @@ fGenerateBucketReport () {
         fi
 
         echo -e "\tBucket: ${awsBucket}"
-        echo -e "\t\t\tSize:    ${awsBucketSizeReadable}"
-        echo -e "\t\t\tObjects: ${awsBucketObjets}"
-        echo -e "\t\t\tPolicy:  ${awsBucketPolicy:+True}"
-        echo -e "\t\t\tLifecycle: ${awsBucketLifecyclePolicy:+True}"
+        echo -e "\t  Size:      ${awsBucketSizeReadable}"
+        echo -e "\t  Objects:   ${awsBucketObjects}"
+        echo -e "\t  Policy:    ${awsBucketPolicy:+True}"
+        echo -e "\t  Lifecycle: ${awsBucketLifecyclePolicy:+True}"
 #        echo -e "${awsAccount}\t${awsAccountName}\t${awsBucket}\t${awsBucketCreationDate}\t${awsBucketLastModified}\t${awsBucketLocation}\t${awsBucketSize}\t${awsBucketSizeReadable}\t${awsBucketObjects}\t${awsBucketIsPublic}\t${awsIgnorePublicAcls}\t${awsBlockPublicPolicy}\t${awsBlockPublicAcls}\t${awsRestrictPublicBuckets}"
         echo -e "${awsAccount}\t${awsAccountName}\t${awsBucket}\t${awsBucketCreationDate}\t${awsBucketLastModified}\t${awsBucketLocation}\t${awsBucketSize}\t${awsBucketSizeReadable}\t${awsBucketObjects}\t${awsBucketIsPublic}\t${awsIgnorePublicAcls}\t${awsBlockPublicPolicy}\t${awsBlockPublicAcls}\t${awsRestrictPublicBuckets}\t${awsBucketPolicy}\t${awsBucketLifecyclePolicy}" >> $CSV_FILE
 
