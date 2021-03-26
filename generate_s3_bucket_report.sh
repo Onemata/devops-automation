@@ -52,11 +52,14 @@ fGenerateBucketReport () {
             awsBucketSizeReadable=`perl -e "printf('%.2f', ${awsBucketSize}/1024)"`" KB"
         fi
 
-        echo -e "  Bucket: ${awsBucket}"
-        echo -e "\t  Size:      ${awsBucketSizeReadable}"
+        bold=$(tput bold)
+        normal=$(tput sgr0)
+        echo -e "  ${bold}${awsBucket}${normal}"
         echo -e "\t  Objects:   ${awsBucketObjects}"
-        echo -e "\t  Policy:    ${awsBucketPolicy:+True}"
-        echo -e "\t  Lifecycle: ${awsBucketLifecyclePolicy:+True}"
+        if [[ -n ${awsBucketSizeReadable} ]] ;    then echo -e "\t  Size:      ${awsBucketSizeReadable}" ; fi
+        if [[ -n ${awsBucketPolicy} ]]       ;    then echo -e "\t  Policy:    ${awsBucketPolicy:+True}" ; fi
+        if [[ -n ${awsBucketLifecyclePolicy} ]] ; then echo -e "\t  Lifecycle: ${awsBucketLifecyclePolicy:+True}" ; fi
+        if [[ ${awsBucketIsPublic} == "True" ]] ; then echo -e "\t  ${bold}Public:    ${awsBucketIsPublic}${normal}" ; fi
 #        echo -e "${awsAccount}\t${awsAccountName}\t${awsBucket}\t${awsBucketCreationDate}\t${awsBucketLastModified}\t${awsBucketLocation}\t${awsBucketSize}\t${awsBucketSizeReadable}\t${awsBucketObjects}\t${awsBucketIsPublic}\t${awsIgnorePublicAcls}\t${awsBlockPublicPolicy}\t${awsBlockPublicAcls}\t${awsRestrictPublicBuckets}"
         echo -e "${awsAccount}\t${awsAccountName}\t${awsBucket}\t${awsBucketCreationDate}\t${awsBucketLastModified}\t${awsBucketLocation}\t${awsBucketSize}\t${awsBucketSizeReadable}\t${awsBucketObjects}\t${awsBucketIsPublic}\t${awsIgnorePublicAcls}\t${awsBlockPublicPolicy}\t${awsBlockPublicAcls}\t${awsRestrictPublicBuckets}\t${awsBucketPolicy}\t${awsBucketLifecyclePolicy}" >> $CSV_FILE
 
