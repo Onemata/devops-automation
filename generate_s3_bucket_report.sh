@@ -33,7 +33,7 @@ fGenerateBucketReport () {
     #	echo "Created:      ${awsBucketCreationDate}"
 
         awsBucketLocation=`aws --profile ${AWS_PROFILE} s3api get-bucket-location --bucket ${awsBucket} --output text`
-        if [[ ${awsBucketLocation} == 'null' ]] ; then awsBucketLocation='us-east-1' ; fi
+        if [[ ${awsBucketLocation} == 'None' ]] ; then awsBucketLocation='us-east-1' ; fi
         awsBucketLifecyclePolicy=`aws --profile ${AWS_PROFILE}  s3api get-bucket-lifecycle-configuration  --bucket ${awsBucket} 2> /dev/null | jq . -c`
         awsBucketPolicy=`aws --profile ${AWS_PROFILE}  s3api get-bucket-policy  --bucket ${awsBucket} 2> /dev/null | jq . -c`
         awsBucketIsPublic=`aws --profile ${AWS_PROFILE}  s3api get-bucket-policy-status --query PolicyStatus --bucket ${awsBucket} --output text 2> /dev/null`
