@@ -1,5 +1,4 @@
 #!/bin/bash
-#profiles=$( awk -F"\\\]|\\\[" '/^\[/{print $2}' ~/.aws/credentials)
 
 AWS_PROFILES_CONF=./aws_profiles.conf
 SINGLE_REPORT_FILE=./aws_iam_credentials_report.csv
@@ -7,6 +6,9 @@ rm -f $SINGLE_REPORT_FILE
 
 # Read in the conf files into an array
 while read line ; do arrayProfiles[c++]="$line" ; done < <(cat ${AWS_PROFILES_CONF})
+
+# Use this section to loop through all profiles listed in credentials file
+#profiles=$( awk -F"\\\]|\\\[" '/^\[/{print $2}' ~/.aws/credentials)
 
 # loop through multiple accounts
 for profile in ${arrayProfiles[*]}; do
