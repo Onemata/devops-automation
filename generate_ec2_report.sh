@@ -146,6 +146,7 @@ fGetInstanceDetails () {
    read InstanceName InstanceId InstanceType State KeyName Platform LaunchTime PrivateIp PublicIp SubnetId VpcId Zone Architecture Hypervisor VirtualizationType  < <(eval $cmdGetInstanceDetails)
    if [[ "$Platform" == "None" ]] ; then Platform=Other ; fi
    InstanceName=${InstanceName:-"None"}
+   echo "$ownerId,$InstanceName,$InstanceId,$InstanceType,$State,$KeyName,$Platform,$LaunchTime,$PrivateIp,$PublicIp,$SubnetId,$VpcId,$Zone,$Architecture,$Hypervisor,$VirtualizationType"
    echo "$ownerId,$InstanceName,$InstanceId,$InstanceType,$State,$KeyName,$Platform,$LaunchTime,$PrivateIp,$PublicIp,$SubnetId,$VpcId,$Zone,$Architecture,$Hypervisor,$VirtualizationType" >> ${AWS_EC2_LIST}
 #   eval $cmdGetInstanceDetails
 #   eval $cmdGetInstanceState
