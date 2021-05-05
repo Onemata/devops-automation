@@ -30,7 +30,7 @@ cmdGetInstnaceNetworkInterfaces="$cmdBaseAWS --query 'Reservations[*].Instances[
 cmdGetOwnerId="$cmdBaseAWS --query 'Reservations[*].[OwnerId]' \
                ec2 describe-instances --instance-ids \$instanceId"
 
-cmdGetInstanceDetails="$cmdBaseAWS --query 'Reservations[*].Instances[*].InstanceId,InstanceType,State.Name,KeyName,Platform,LaunchTime,PrivateIpAddress,PublicIpAddress,SubnetId,VpcId,Placement.AvailabilityZone,Architecture,Hypervisor,VirtualizationType,[Tags[?Key==\`Name\`]|[0].Value]' \
+cmdGetInstanceDetails="$cmdBaseAWS --query '[Reservations[*].Instances[*].InstanceId,InstanceType,State.Name,KeyName,Platform,LaunchTime,PrivateIpAddress,PublicIpAddress,SubnetId,VpcId,Placement.AvailabilityZone,Architecture,Hypervisor,VirtualizationType,Tags[?Key==\`Name\`]|[0].Value]' \
                ec2 describe-instances --instance-ids \$instanceId"
 cmdGetInstanceState="$cmdBaseAWS --query 'Reservations[*].Instances[*].State[*].Name' \
                ec2 describe-instances --instance-ids \$instanceId"
