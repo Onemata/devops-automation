@@ -154,7 +154,7 @@ fGetInstanceDetails () {
 #   eval $cmdGetInstanceZone
 }
 
-echo "OwnerId,InstanceName,InstanceId,InstanceType,State,KeyName,Platform,LaunchTime,PrivateIp,PublicIp,SubnetId,VpcId,Zone,Architecture,Hypervisorr,VirtualizationType" > ${AWS_EC2_LIST}
+echo "AccountName,OwnerId,InstanceName,InstanceId,InstanceType,State,KeyName,Platform,LaunchTime,PrivateIp,PublicIp,SubnetId,VpcId,Zone,Architecture,Hypervisorr,VirtualizationType" > ${AWS_EC2_LIST}
 # Loop through each profile (AWS Account)
 for profile in ${arrayProfiles[*]} ; do
     echo "Starting profile: $profile"
