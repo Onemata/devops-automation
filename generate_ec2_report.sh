@@ -30,7 +30,7 @@ cmdGetInstnaceNetworkInterfaces="$cmdBaseAWS --query 'Reservations[*].Instances[
 cmdGetOwnerId="$cmdBaseAWS --query 'Reservations[*].[OwnerId]' \
                ec2 describe-instances --instance-ids \$instanceId"
 
-cmdGetInstanceDetails="$cmdBaseAWS --query 'Reservations[*].Instances[*].[Tags[?Key==\`Name\`]|[0].Value,InstanceId,InstanceType,State.Name,KeyName,Platform,LaunchTime,PrivateIpAddress,PublicIpAddress,SubnetId,VpcId,Placement.AvailabilityZone,Architecture,Hypervisor,VirtualizationType]' \
+cmdGetInstanceDetails="$cmdBaseAWS --query 'Reservations[*].Instances[*].InstanceId,InstanceType,State.Name,KeyName,Platform,LaunchTime,PrivateIpAddress,PublicIpAddress,SubnetId,VpcId,Placement.AvailabilityZone,Architecture,Hypervisor,VirtualizationType,[Tags[?Key==\`Name\`]|[0].Value]' \
                ec2 describe-instances --instance-ids \$instanceId"
 cmdGetInstanceState="$cmdBaseAWS --query 'Reservations[*].Instances[*].State[*].Name' \
                ec2 describe-instances --instance-ids \$instanceId"
@@ -143,7 +143,7 @@ fGetInstanceDetails () {
    ownerId=`eval ${cmdGetOwnerId}`
 
    # Get Public IP, Local IP, Keypair, Instance Type, VPC ID, Subnet ID, Launch Time, State, Instance ID, Virtualization Type, AVZone, Region, NameTag
-   read InstanceName InstanceId InstanceType State KeyName Platform LaunchTime PrivateIp PublicIp SubnetId VpcId Zone Architecture Hypervisor VirtualizationType  < <(eval $cmdGetInstanceDetails)
+   read InstanceId InstanceType State KeyName Platform LaunchTime PrivateIp PublicIp SubnetId VpcId Zone Architecture Hypervisor VirtualizationType InstanceName < <(eval $cmdGetInstanceDetails)
    if [[ "$Platform" == "None" ]] ; then Platform=Other ; fi
    InstanceName=${InstanceName:-"None"}
    accountName=${profile#onemata-automation-}
