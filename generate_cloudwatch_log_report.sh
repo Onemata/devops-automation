@@ -166,14 +166,18 @@ fGetCloudWatchLogsDetails () {
             aws --output text --profile $profile --region $region logs put-retention-policy --log-group-name "$logGroupName" --retention-in-days 30
             retention=30
         fi
+
         if [[ ${storedBytes} -gt 1099511627776 ]] ; then
             storedBytesReadable=`perl -e "printf('%.2f', ${storedBytes}/1099511627776)"`" TB"
         elif [[ ${storedBytes} -gt 1073741824 ]] ; then
             storedBytesReadable=`perl -e "printf('%.2f', ${storedBytes}/1073741824)"`" GB"
         elif [[ ${storedBytes} -gt 1048576 ]] ; then
             storedBytesReadable=`perl -e "printf('%.2f', ${storedBytes}/1048576)"`" MB"
-        elif [[ ${storedBytes} -gt 1024 ]] ; then
+#        elif [[ ${storedBytes} -gt 1024 ]] ; then
+        else
             storedBytesReadable=`perl -e "printf('%.2f', ${storedBytes}/1024)"`" KB"
+#        else
+#            storedBytesReadable="${storedBytes} Bytes"
         fi
     echo "$accountName,$ownerId,$region,$logGroupName,$retention,$storedBytes,$storedBytesReadable,$creationTime" >> ${AWS_LOGS_LIST}
     echo "$accountName,$ownerId,$region,$logGroupName,$retention,$storedBytes,$storedBytesReadable,$creationTime"

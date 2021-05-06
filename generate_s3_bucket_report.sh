@@ -55,7 +55,8 @@ fGenerateBucketReport () {
             awsBucketSizeReadable=`perl -e "printf('%.2f', ${awsBucketSize}/1073741824)"`" GB"
         elif [[ ${awsBucketSize} -gt 1048576 ]] ; then
             awsBucketSizeReadable=`perl -e "printf('%.2f', ${awsBucketSize}/1048576)"`" MB"
-        elif [[ ${awsBucketSize} -gt 1024 ]] ; then
+#        elif [[ ${awsBucketSize} -gt 1024 ]] ; then
+        else
             awsBucketSizeReadable=`perl -e "printf('%.2f', ${awsBucketSize}/1024)"`" KB"
         fi
 
