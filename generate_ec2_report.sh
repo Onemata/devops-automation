@@ -36,6 +36,7 @@ cmdGetInstanceState="$cmdBaseAWS --query 'Reservations[*].Instances[*].State[*].
                ec2 describe-instances --instance-ids \$instanceId"
 cmdGetInstanceZone="$cmdBaseAWS --query 'Reservations[*].Instances[*].Placement[*].AvailabilityZone' \
                ec2 describe-instances --instance-ids \$instanceId"
+cmdGetAccountId="$cmdBaseAWS sts get-caller-identity --query Account"
 
 fUpdateInstanceTags () {
    profile=$1
@@ -140,7 +141,9 @@ fGetInstanceDetails () {
    unset arrayNetworkIds
    unset arrayResourceIds
 
-   ownerId=`eval ${cmdGetOwnerId}`
+   #ownerId=`eval ${cmdGetOwnerId}`
+   ownerId=`eval ${cmdGetAccountId}`
+
 
    # Get Public IP, Local IP, Keypair, Instance Type, VPC ID, Subnet ID, Launch Time, State, Instance ID, Virtualization Type, AVZone, Region, NameTag
    read InstanceId InstanceType State KeyName Platform LaunchTime PrivateIp PublicIp SubnetId VpcId Zone Architecture Hypervisor VirtualizationType InstanceName < <(eval $cmdGetInstanceDetails)
