@@ -162,9 +162,9 @@ fGetCloudWatchLogsDetails () {
    while read logGroupName creationTime storedBytes retention
    do
         if [[ "$retention" == "None" ]] ; then
-            retention="Never Expire"
-            #aws --output text --profile $profile --region $region logs put-retention-policy --log-group-name "$logGroupName" --retention-in-days 30
-            #retention=30
+            #retention="Never Expire"
+            aws --output text --profile $profile --region $region logs put-retention-policy --log-group-name "$logGroupName" --retention-in-days 30
+            retention=30
         fi
         if [[ ${storedBytes} -gt 1099511627776 ]] ; then
             storedBytesReadable=`perl -e "printf('%.2f', ${storedBytes}/1099511627776)"`" TB"
