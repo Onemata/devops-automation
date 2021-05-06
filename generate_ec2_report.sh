@@ -164,6 +164,7 @@ for profile in ${arrayProfiles[*]} ; do
     # Get list of regions
     # Set a default region for this command to get the list of all regions
     region=us-east-1
+    unset arrayRegions
     while read region; do arrayRegions[c++]="$region" ; done < <(eval ${cmdGetRegions})
     # Loop through each region looking for EC2 instances
     for region in ${arrayRegions[*]} ; do
