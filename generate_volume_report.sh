@@ -8,6 +8,7 @@ MISSING_TAGS_FILE=./aws_instances_missing_tags.csv
 AWS_EC2_LIST=./aws_ec2_resource_list.csv
 AWS_LOGS_LIST=./aws_cloudwatch_logs_list.csv
 AWS_SNAPSHOT_LIST=./aws_snapshot_list.csv
+AWS_VOLUME_LIST=./aws_volume_list.csv
 
 # Read in the conf files into an array
 #while read line ; do arrayTagsList[c++]="$line" ; done < <(cat ${AWS_TAGS_CONF})
@@ -187,15 +188,15 @@ fGetSnapshotDetails () {
    ownerId=`eval ${cmdGetAccountId}`
    accountName=${profile#onemata-automation-}
 
-   while read snapshotId volumeSize encrypted description
+   while read VolumedID State InstnaceId Encrypted VolumeType Iops Size Name
    do
-       echo -e  "$accountName\t$ownerId\t$region\t$snapshotId\t$volumeSize\t$StartTime\t$encrypted\t$description" >> ${AWS_SNAPSHOT_LIST}
-       echo -e  "$accountName\t$ownerId\t$region\t$snapshotId\t$volumeSize\t$StartTime\t$encrypted\t$description"
-   done < <(aws --output text --profile $profile --region $region ec2 describe-snapshots --owner-ids self --query 'Snapshots[*].[SnapshotId,VolumeSize,StartTime,Encrypted,Description]')
+       echo -e  "$accountName\t$ownerId\t$region\t$VolumedID\t$State\t$InstnaceId\t$Encrypted\t$VolumeType\t$Iops\t$Size\t$Name" >> ${AWS_VOLUME_LIST}
+       echo -e  "$accountName\t$ownerId\t$region\t$VolumedID\t$State\t$InstnaceId\t$Encrypted\t$VolumeType\t$Iops\t$Size\t$Name"
+   done < <(aws --output text --profile $profile --region $region ec2 describe-volumes  --query 'Volumes[*].[VolumeId,State,Attachments[*].InstanceId,Encrypted,VolumeType,Iops,Size,Tags[?Key==`Name`]|[0].Value]')
 }
 
-echo -e "AccountName\tOwnerId\tRegion\tsnapshotId\tvolumeSize\tStartTime\tencrypted\tdescription" > ${AWS_SNAPSHOT_LIST}
-echo -e "AccountName\tOwnerId\tRegion\tsnapshotId\tvolumeSize\tStartTime\tencrypted\tdescription"
+echo "accountName\townerId\tregion\tVolumedID\tState\tInstnaceId\tEncrypted\tVolumeType\tIops\tSize\tName" > ${AWS_VOLUME_LIST}
+echo "accountName\townerId\tregion\tVolumedID\tState\tInstnaceId\tEncrypted\tVolumeType\tIops\tSize\tName"
 # Loop through each profile (AWS Account)
 for profile in ${arrayProfiles[*]} ; do
     echo "Starting profile: $profile"
