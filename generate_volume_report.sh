@@ -188,15 +188,18 @@ fGetSnapshotDetails () {
    ownerId=`eval ${cmdGetAccountId}`
    accountName=${profile#onemata-automation-}
 
-   while read VolumedID State InstnaceId Encrypted VolumeType Iops Size Name
+   while read VolumeId State Encrypted VolumeType Iops Size Name
    do
-       echo -e  "$accountName\t$ownerId\t$region\t$VolumedID\t$State\t$InstnaceId\t$Encrypted\t$VolumeType\t$Iops\t$Size\t$Name" >> ${AWS_VOLUME_LIST}
-       echo -e  "$accountName\t$ownerId\t$region\t$VolumedID\t$State\t$InstnaceId\t$Encrypted\t$VolumeType\t$Iops\t$Size\t$Name"
-   done < <(aws --output text --profile $profile --region $region ec2 describe-volumes  --query 'Volumes[*].[VolumeId,State,Attachments[*].InstanceId,Encrypted,VolumeType,Iops,Size,Tags[?Key==`Name`]|[0].Value]')
+       if [[ $State == "in-use" ]] ; then
+           read InstanceId < <(aws --output text --profile $profile --region $region ec2 describe-volumes  --filters Name=volume-id,Values=$VolumeId --query 'Volumes[*].[Attachments[*].InstanceId]')
+       fi
+       echo -e  "$accountName\t$ownerId\t$region\t$VolumeId\t$State\t$InstanceId\t$Encrypted\t$VolumeType\t$Iops\t$Size\t$Name" >> ${AWS_VOLUME_LIST}
+       echo -e  "$accountName\t$ownerId\t$region\t$VolumeId\t$State\t$InstanceId\t$Encrypted\t$VolumeType\t$Iops\t$Size\t$Name"
+   done < <(aws --output text --profile $profile --region $region ec2 describe-volumes  --query 'Volumes[*].[VolumeId,State,Encrypted,VolumeType,Iops,Size,Tags[?Key==`Name`]|[0].Value]')
 }
 
-echo "accountName\townerId\tregion\tVolumedID\tState\tInstnaceId\tEncrypted\tVolumeType\tIops\tSize\tName" > ${AWS_VOLUME_LIST}
-echo "accountName\townerId\tregion\tVolumedID\tState\tInstnaceId\tEncrypted\tVolumeType\tIops\tSize\tName"
+echo -e "accountName\townerId\tregion\tVolumeId\tState\tInstanceId\tEncrypted\tVolumeType\tIops\tSize\tName" > ${AWS_VOLUME_LIST}
+echo -e "accountName\townerId\tregion\tVolumeId\tState\tInstanceId\tEncrypted\tVolumeType\tIops\tSize\tName"
 # Loop through each profile (AWS Account)
 for profile in ${arrayProfiles[*]} ; do
     echo "Starting profile: $profile"
