@@ -194,7 +194,7 @@ fGetSnapshotDetails () {
    done < <(aws --output text --profile $profile --region $region ec2 describe-snapshots --owner-ids self --query 'Snapshots[*].[SnapshotId,VolumeSize,StartTime,Encrypted,Description]')
 }
 
-echo "AccountName,OwnerId,Region,snapshotId,volumeSize,StartTime,encrypted,description" > ${AWS_LOGS_LIST}
+echo "AccountName,OwnerId,Region,snapshotId,volumeSize,StartTime,encrypted,description" > ${AWS_SNAPSHOT_LIST}
 echo "AccountName,OwnerId,Region,snapshotId,volumeSize,StartTime,encrypted,description"
 # Loop through each profile (AWS Account)
 for profile in ${arrayProfiles[*]} ; do
