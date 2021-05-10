@@ -187,10 +187,10 @@ fGetSnapshotDetails () {
    ownerId=`eval ${cmdGetAccountId}`
    accountName=${profile#onemata-automation-}
 
-   while read snapshotId volumeSize encrypted description
+   while read snapshotId volumeSize startTime encrypted description
    do
-       echo -e  "$accountName\t$ownerId\t$region\t$snapshotId\t$volumeSize\t$StartTime\t$encrypted\t$description" >> ${AWS_SNAPSHOT_LIST}
-       echo -e  "$accountName\t$ownerId\t$region\t$snapshotId\t$volumeSize\t$StartTime\t$encrypted\t$description"
+       echo -e  "$accountName\t$ownerId\t$region\t$snapshotId\t$volumeSize\t$startTime\t$encrypted\t$description" >> ${AWS_SNAPSHOT_LIST}
+       echo -e  "$accountName\t$ownerId\t$region\t$snapshotId\t$volumeSize\t$startTime\t$encrypted\t$description"
    done < <(aws --output text --profile $profile --region $region ec2 describe-snapshots --owner-ids self --query 'Snapshots[*].[SnapshotId,VolumeSize,StartTime,Encrypted,Description]')
 }
 
