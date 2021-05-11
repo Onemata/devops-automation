@@ -189,12 +189,14 @@ fGetRDSDetails () {
    ownerId=`eval ${cmdGetAccountId}`
    accountName=${profile#onemata-automation-}
 
-   while read DBInstanceIdentifier DBInstanceClass AllocatedStorage InstanceCreateTime PreferredBackupWindow BackupRetentionPeriod AvailabilityZone MultiAZ EngineVersion Engine DBInstanceStatus MasterUsername HostedZoneId PubliclyAccessible StorageType MaxAllocatedStorage
+   while read DBInstanceIdentifier DBInstanceClass AllocatedStorage InstanceCreateTime PreferredBackupWindow BackupRetentionPeriod AvailabilityZone MultiAZ EngineVersion Engine DBInstanceStatus MasterUsername PubliclyAccessible StorageType MaxAllocatedStorage
    do
        echo  "$accountName,$ownerId,$region,$DBInstanceIdentifier,$DBInstanceClass,$StorageType,$AllocatedStorage,$MaxAllocatedStorage,$EngineVersion,$Engine,$PubliclyAccessible,$AvailabilityZone,$MultiAZ,$DBInstanceStatus,$MasterUsername,$HostedZoneId,$InstanceCreateTime,$PreferredBackupWindow,$BackupRetentionPeriod" >> ${AWS_RDS_LIST}
        echo  "$DBInstanceIdentifier,$DBInstanceClass,$StorageType,$AllocatedStorage,$MaxAllocatedStorage,$EngineVersion,$Engine,$PubliclyAccessible,$AvailabilityZone,$MultiAZ,$DBInstanceStatus,$MasterUsername,$HostedZoneId,$InstanceCreateTime,$PreferredBackupWindow,$BackupRetentionPeriod"
-   done < <(aws --output text --profile $profile --region $region rds describe-db-instances  --query 'DBInstances[*].[DBInstanceIdentifier,DBInstanceClass,AllocatedStorage,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod,AvailabilityZone,MultiAZ,EngineVersion,Engine,DBInstanceStatus,MasterUsername,Endpoint[].Address,Endpoint[].Port,Endpoint[].HostedZoneId,PubliclyAccessible,StorageType,MaxAllocatedStorage]')
+   done < <(aws --output text --profile $profile --region $region rds describe-db-instances  --query 'DBInstances[*].[DBInstanceIdentifier,DBInstanceClass,AllocatedStorage,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod,AvailabilityZone,MultiAZ,EngineVersion,Engine,DBInstanceStatus,MasterUsername,PubliclyAccessible,StorageType,MaxAllocatedStorage]')
 }
+
+# ,Endpoint[].Address,Endpoint[].Port,Endpoint[].HostedZoneId
 
 echo "AccountName,OwnerId,Region,DBInstanceIdentifier,DBInstanceClass,StorageType,AllocatedStorage,MaxAllocatedStorage,EngineVersion,Engine,PubliclyAccessible,AvailabilityZone,MultiAZ,DBInstanceStatus,MasterUsername,HostedZoneId,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod" > ${AWS_RDS_LIST}
 echo "DBInstanceIdentifier,DBInstanceClass,StorageType,AllocatedStorage,MaxAllocatedStorage,EngineVersion,Engine,PubliclyAccessible,AvailabilityZone,MultiAZ,DBInstanceStatus,MasterUsername,HostedZoneId,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod"
