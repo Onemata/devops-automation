@@ -198,6 +198,7 @@ fGetRDSDetails () {
 
 echo "AccountName,OwnerId,Region,DBInstanceIdentifier,DBInstanceClass,StorageType,AllocatedStorage,MaxAllocatedStorage,EngineVersion,Engine,PubliclyAccessible,AvailabilityZone,MultiAZ,DBInstanceStatus,MasterUsername,HostedZoneId,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod" > ${AWS_RDS_LIST}
 echo "DBInstanceIdentifier,DBInstanceClass,StorageType,AllocatedStorage,MaxAllocatedStorage,EngineVersion,Engine,PubliclyAccessible,AvailabilityZone,MultiAZ,DBInstanceStatus,MasterUsername,HostedZoneId,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod"
+
 # Loop through each profile (AWS Account)
 for profile in ${arrayProfiles[*]} ; do
     echo "Starting profile: $profile"
