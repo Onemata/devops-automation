@@ -9,6 +9,7 @@ AWS_EC2_LIST=./aws_ec2_resource_list.csv
 AWS_LOGS_LIST=./aws_cloudwatch_logs_list.csv
 AWS_SNAPSHOT_LIST=./aws_snapshot_list.csv
 AWS_VOLUME_LIST=./aws_volume_list.csv
+AWS_RDS_LIST=./aws_rds_list.csv
 
 # Read in the conf files into an array
 #while read line ; do arrayTagsList[c++]="$line" ; done < <(cat ${AWS_TAGS_CONF})
@@ -182,24 +183,21 @@ fGetCloudWatchLogsDetails () {
 
 }
 
-fGetVolumeDetails () {
+fGetRDSDetails () {
    profile=$1
    region=$2
    ownerId=`eval ${cmdGetAccountId}`
    accountName=${profile#onemata-automation-}
 
-   while read VolumeId State Encrypted VolumeType Iops Size Name
+   while read DBInstanceIdentifier DBInstanceClass AllocatedStorage InstanceCreateTime PreferredBackupWindow BackupRetentionPeriod AvailabilityZone MultiAZ EngineVersion Engine DBInstanceStatus MasterUsername HostedZoneId PubliclyAccessible StorageType MaxAllocatedStorage
    do
-       if [[ $State == "in-use" ]] ; then
-           read InstanceId < <(aws --output text --profile $profile --region $region ec2 describe-volumes  --filters Name=volume-id,Values=$VolumeId --query 'Volumes[*].[Attachments[*].InstanceId]')
-       fi
-       echo -e  "$accountName\t$ownerId\t$region\t$VolumeId\t$State\t$InstanceId\t$Encrypted\t$VolumeType\t$Iops\t$Size\t$Name" >> ${AWS_VOLUME_LIST}
-       echo -e  "$accountName\t$ownerId\t$region\t$VolumeId\t$State\t$InstanceId\t$Encrypted\t$VolumeType\t$Iops\t$Size\t$Name"
-   done < <(aws --output text --profile $profile --region $region ec2 describe-volumes  --query 'Volumes[*].[VolumeId,State,Encrypted,VolumeType,Iops,Size,Tags[?Key==`Name`]|[0].Value]')
+       echo  "$accountName,$ownerId,$region,$DBInstanceIdentifier,$DBInstanceClass,$StorageType,$AllocatedStorage,$MaxAllocatedStorage,$EngineVersion,$Engine,$PubliclyAccessible,$AvailabilityZone,$MultiAZ,$DBInstanceStatus,$MasterUsername,$HostedZoneId,$InstanceCreateTime,$PreferredBackupWindow,$BackupRetentionPeriod" >> ${AWS_RDS_LIST}
+       echo  "$DBInstanceIdentifier,$DBInstanceClass,$StorageType,$AllocatedStorage,$MaxAllocatedStorage,$EngineVersion,$Engine,$PubliclyAccessible,$AvailabilityZone,$MultiAZ,$DBInstanceStatus,$MasterUsername,$HostedZoneId,$InstanceCreateTime,$PreferredBackupWindow,$BackupRetentionPeriod"
+   done < <(aws --output text --profile $profile --region $region rds describe-db-instances  --query 'DBInstances[*].[DBInstanceIdentifier,DBInstanceClass,AllocatedStorage,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod,AvailabilityZone,MultiAZ,EngineVersion,Engine,DBInstanceStatus,MasterUsername,Endpoint[].Address,Endpoint[].Port,Endpoint[].HostedZoneId,PubliclyAccessible,StorageType,MaxAllocatedStorage]')
 }
 
-echo -e "accountName\townerId\tregion\tVolumeId\tState\tInstanceId\tEncrypted\tVolumeType\tIops\tSize\tName" > ${AWS_VOLUME_LIST}
-echo -e "accountName\townerId\tregion\tVolumeId\tState\tInstanceId\tEncrypted\tVolumeType\tIops\tSize\tName"
+echo "AccountName,OwnerId,Region,DBInstanceIdentifier,DBInstanceClass,StorageType,AllocatedStorage,MaxAllocatedStorage,EngineVersion,Engine,PubliclyAccessible,AvailabilityZone,MultiAZ,DBInstanceStatus,MasterUsername,HostedZoneId,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod" > ${AWS_RDS_LIST}
+echo "DBInstanceIdentifier,DBInstanceClass,StorageType,AllocatedStorage,MaxAllocatedStorage,EngineVersion,Engine,PubliclyAccessible,AvailabilityZone,MultiAZ,DBInstanceStatus,MasterUsername,HostedZoneId,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod"
 # Loop through each profile (AWS Account)
 for profile in ${arrayProfiles[*]} ; do
     echo "Starting profile: $profile"
@@ -210,6 +208,6 @@ for profile in ${arrayProfiles[*]} ; do
     while read region; do arrayRegions[c++]="$region" ; done < <(eval ${cmdGetRegions})
     # Loop through each region looking for EC2 instances
     for region in ${arrayRegions[*]} ; do
-        fGetVolumeDetails $profile $region
+        fGetRDSDetails $profile $region
     done
 done
