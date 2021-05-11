@@ -191,15 +191,15 @@ fGetRDSDetails () {
 
    while read DBInstanceIdentifier DBInstanceClass AllocatedStorage InstanceCreateTime PreferredBackupWindow BackupRetentionPeriod AvailabilityZone MultiAZ EngineVersion Engine DBInstanceStatus MasterUsername PubliclyAccessible StorageType MaxAllocatedStorage
    do
-       echo  "$accountName,$ownerId,$region,$DBInstanceIdentifier,$DBInstanceClass,$StorageType,$AllocatedStorage,$MaxAllocatedStorage,$EngineVersion,$Engine,$PubliclyAccessible,$AvailabilityZone,$MultiAZ,$DBInstanceStatus,$MasterUsername,$HostedZoneId,$InstanceCreateTime,$PreferredBackupWindow,$BackupRetentionPeriod" >> ${AWS_RDS_LIST}
-       echo  "$DBInstanceIdentifier,$DBInstanceClass,$StorageType,$AllocatedStorage,$MaxAllocatedStorage,$EngineVersion,$Engine,$PubliclyAccessible,$AvailabilityZone,$MultiAZ,$DBInstanceStatus,$MasterUsername,$HostedZoneId,$InstanceCreateTime,$PreferredBackupWindow,$BackupRetentionPeriod"
+       echo  "$accountName,$ownerId,$region,$DBInstanceIdentifier,$DBInstanceClass,$StorageType,$AllocatedStorage,$MaxAllocatedStorage,$Engine,$EngineVersion,$PubliclyAccessible,$AvailabilityZone,$MultiAZ,$DBInstanceStatus,$MasterUsername,$InstanceCreateTime,$PreferredBackupWindow,$BackupRetentionPeriod" >> ${AWS_RDS_LIST}
+       echo  "$DBInstanceIdentifier,$DBInstanceClass,$StorageType,$AllocatedStorage,$MaxAllocatedStorage,$Engine,$EngineVersion,$PubliclyAccessible,$AvailabilityZone,$MultiAZ,$DBInstanceStatus,$MasterUsername,$InstanceCreateTime,$PreferredBackupWindow,$BackupRetentionPeriod"
    done < <(aws --output text --profile $profile --region $region rds describe-db-instances  --query 'DBInstances[*].[DBInstanceIdentifier,DBInstanceClass,AllocatedStorage,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod,AvailabilityZone,MultiAZ,EngineVersion,Engine,DBInstanceStatus,MasterUsername,PubliclyAccessible,StorageType,MaxAllocatedStorage]')
 }
 
 # ,Endpoint[].Address,Endpoint[].Port,Endpoint[].HostedZoneId
 
-echo "AccountName,OwnerId,Region,DBInstanceIdentifier,DBInstanceClass,StorageType,AllocatedStorage,MaxAllocatedStorage,EngineVersion,Engine,PubliclyAccessible,AvailabilityZone,MultiAZ,DBInstanceStatus,MasterUsername,HostedZoneId,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod" > ${AWS_RDS_LIST}
-echo "DBInstanceIdentifier,DBInstanceClass,StorageType,AllocatedStorage,MaxAllocatedStorage,EngineVersion,Engine,PubliclyAccessible,AvailabilityZone,MultiAZ,DBInstanceStatus,MasterUsername,HostedZoneId,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod"
+echo "AccountName,OwnerId,Region,DBInstanceIdentifier,DBInstanceClass,StorageType,AllocatedStorage,MaxAllocatedStorage,Engine,EngineVersion,PubliclyAccessible,AvailabilityZone,MultiAZ,DBInstanceStatus,MasterUsername,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod" > ${AWS_RDS_LIST}
+echo "DBInstanceIdentifier,DBInstanceClass,StorageType,AllocatedStorage,MaxAllocatedStorage,Engine,EngineVersion,PubliclyAccessible,AvailabilityZone,MultiAZ,DBInstanceStatus,MasterUsername,InstanceCreateTime,PreferredBackupWindow,BackupRetentionPeriod"
 
 # Loop through each profile (AWS Account)
 for profile in ${arrayProfiles[*]} ; do
