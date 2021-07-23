@@ -39,10 +39,37 @@ deleteSQSQueue () {
     fi
 }
 
+CheckStatusOfTasks () {
+    STATUS="STOPPED"
+    for taskResource in ${RESOURCES//;/ } ; do
+        #echo "${taskResource}"
+        taskResourceArn="${TASK_BASE_ARN}/${taskResource}"
+        echo "Checking Task: ${taskResourceArn}"
+        STATUS=`aws --region ${REGION} --profile ${PROFILE} ecs describe-tasks  --cluster ${CLUSTER_ARN} --tasks ${taskResourceArn} --query 'tasks[*].{lastStatus: lastStatus}' --output text`
+        if [[ "${STATUS}" == "RUNNING" ]] ; then
+            break
+        fi
+    done
+}
+
+areTasksRunning () {
+    STATUS="RUNNING"
+    until [[ "${STATUS}" == "STOPPED" ]] ; do
+
+        CheckStatusOfTasks
+        if [[ "${STATUS}" == "RUNNING" ]] ; then
+            echo "Tasks are still running... Sleeping 30 seconds"
+            sleep 30
+        fi
+
+    done
+}
+
 case "$1" in
     "") exit ;;
     isSQSQueueEmpty) "@"; exit $?;;
     deleteSQSQueue) "@"; exit $?;;
+    areTasksRunning) "@"; exit $?;;
     *) echo "unkown function" ; exit 2;;
 esac
 
