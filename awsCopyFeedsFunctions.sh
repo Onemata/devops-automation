@@ -15,7 +15,7 @@ isSQSQueueEmpty () {
             echo "==========================="
             echo "Queue is empty"
             echo "==========================="
-            exit 0
+            return 0
         fi
         echo "==========================="
         echo "Queue still has ${Messages} messages."
@@ -64,6 +64,7 @@ areTasksRunning () {
 
     done
 }
+
 
 case "$1" in
     "") exit ;;
