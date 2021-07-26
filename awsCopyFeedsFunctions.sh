@@ -69,12 +69,27 @@ createSQSQueue () {
     ##  Create the SQS queue used during this run
     aws --profile ${PROFILE} --region ${REGION} sqs create-queue --queue-name ${SQS_NAME}
     getSQSQueueURL
+    return 0
 
 }
 
 getSQSQueueURL () {
     SQS_URL=`aws --profile ${PROFILE} --region ${REGION} sqs get-queue-url --output text --queue-name ${SQS_NAME}`
     echo "SQS_URL=${SQS_URL}" >> ./env.properties
+    return 0
+}
+
+addObjectListToQueue () {
+    while read objects
+    do
+            echo "--------------------------------"
+            aws --profile ${PROFILE} --region ${REGION} sqs send-message-batch --queue-url "${SQS_URL}" --entries ${objects}
+            echo "--profile:   ${PROFILE}"
+            echo "--queue-url: ${SQS_URL}"
+            echo "--entries:   ${objects}"
+    done < ${OBJECT_LIST_FILE}
+
+    return 0
 }
 
 case "$1" in
@@ -83,6 +98,7 @@ case "$1" in
     deleteSQSQueue) deleteSQSQueue; exit $?;;
     areTasksRunning) areTasksRunning; exit $?;;
     createSQSQueue) createSQSQueue; exit $?;;
+    addObjectListToQueue) addObjectListToQueue; exit $?;;
     *) echo "unkown function" ; exit 2;;
 esac
 
