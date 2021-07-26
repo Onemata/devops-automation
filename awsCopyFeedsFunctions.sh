@@ -67,9 +67,9 @@ areTasksRunning () {
 
 case "$1" in
     "") exit ;;
-    isSQSQueueEmpty) "@"; exit $?;;
-    deleteSQSQueue) "@"; exit $?;;
-    areTasksRunning) "@"; exit $?;;
+    isSQSQueueEmpty) isSQSQueueEmpty; exit $?;;
+    deleteSQSQueue) deleteSQSQueue; exit $?;;
+    areTasksRunning) areTasksRunning; exit $?;;
     *) echo "unkown function" ; exit 2;;
 esac
 
