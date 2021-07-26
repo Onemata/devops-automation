@@ -65,12 +65,24 @@ areTasksRunning () {
     done
 }
 
+createSQSQueue () {
+    ##  Create the SQS queue used during this run
+    aws --profile ${PROFILE} --region ${REGION} sqs create-queue --queue-name ${SQS_NAME}
+    getSQSQueueURL
+
+}
+
+getSQSQueueURL () {
+    SQS_URL=`aws --profile ${PROFILE} --region ${REGION} sqs get-queue-url --output text --queue-name ${SQS_NAME}`
+    echo "SQS_URL=${SQS_URL}" >> ./env.properties
+}
 
 case "$1" in
     "") exit ;;
     isSQSQueueEmpty) isSQSQueueEmpty; exit $?;;
     deleteSQSQueue) deleteSQSQueue; exit $?;;
     areTasksRunning) areTasksRunning; exit $?;;
+    createSQSQueue) createSQSQueue; exit $?;;
     *) echo "unkown function" ; exit 2;;
 esac
 
