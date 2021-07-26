@@ -129,28 +129,30 @@ set -
 
 while [[ 0 -eq 0 ]]
 do
-    while read MessageBody ReceiptHandle Other
-    do
+        while read MessageBody ReceiptHandle Other
+        do
                 if [[ "${MessageBody}" != "None" ]] ; then
-            #if [[ "$PREFIX_TARGET" != "" ]] ; then
-            #	TargetObject=${PREFIX_TARGET}/$MessageBody
-            #else
-            #	TargetOjbect=$MessageBody
-            #fi
-            TargetObject=${MessageBody%Onemata_Mobile_Location_Data_*}${MessageBody#*Onemata_Mobile_Location_Data_}
-            echo "SourceObject:   $MessageBody"
-            echo "TargetObject:   $TargetObject"
-            echo "Handle:         $ReceiptHandle"
-              		SourceFileSize=`aws --profile AWS_SOURCE  s3api list-objects --bucket ${AWS_BUCKET_SOURCE} --prefix "$MessageBody" --query 'Contents[*].{Size: Size}' --output text`
-            aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$MessageBody - | aws --profile AWS_TARGET s3 cp - s3://${AWS_BUCKET_TARGET}/$TargetObject
-              		TargetFileSize=`aws --profile AWS_TARGET  s3api list-objects --bucket ${AWS_BUCKET_TARGET} --prefix "$TargetObject" --query 'Contents[*].{Size: Size}' --output text`
-            if [[ $SourceFileSize == $TargetFileSize ]] ; then
-                    	aws --profile AWS_SQS --region us-west-2 sqs delete-message --queue-url "${SQS_URL}" --receipt-handle "$ReceiptHandle"
-            fi
-        else
-            break 2
-        fi
-    done < <(aws --profile AWS_SQS --region us-west-2 sqs receive-message --queue-url "${SQS_URL}" --max-number-of-messages 10 --query 'Messages[*].{Body: Body, ReceiptHandle: ReceiptHandle}'  --output text)
+                        #if [[ "$PREFIX_TARGET" != "" ]] ; then
+                        #       TargetObject=${PREFIX_TARGET}/$MessageBody
+                        #else
+                        #       TargetOjbect=$MessageBody
+                        #fi
+                        #TargetObject=${MessageBody%Onemata_Mobile_Location_Data_*}${MessageBody#*Onemata_Mobile_Location_Data_}
+                        TargetObject="${MessageBody/_1_/_2_}"
+                        echo "SourceObject:   $MessageBody"
+                        echo "TargetObject:   $TargetObject"
+                        echo "Handle:         $ReceiptHandle"
+                        SourceFileSize=`aws --profile AWS_SOURCE  s3api list-objects --bucket ${AWS_BUCKET_SOURCE} --prefix "$MessageBody" --query 'Contents[*].{Size: Size}' --output text`
+#                       aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$MessageBody - | aws --profile AWS_TARGET s3 cp - s3://${AWS_BUCKET_TARGET}/$TargetObject
+                        aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$MessageBody - | gsutil cp - gs://${GS_URI}/$TargetObject
+#                       TargetFileSize=`aws --profile AWS_TARGET  s3api list-objects --bucket ${AWS_BUCKET_TARGET} --prefix "$TargetObject" --query 'Contents[*].{Size: Size}' --output text`
+#                       if [[ $SourceFileSize == $TargetFileSize ]] ; then
+                                aws --profile AWS_SQS --region us-west-2 sqs delete-message --queue-url "${SQS_URL}" --receipt-handle "$ReceiptHandle"
+#                       fi
+                else
+                        break 2
+                fi
+        done < <(aws --profile AWS_SQS --region us-west-2 sqs receive-message --queue-url "${SQS_URL}" --max-number-of-messages 10 --query 'Messages[*].{Body: Body, ReceiptHandle: ReceiptHandle}'  --output text)
 
 done
 
