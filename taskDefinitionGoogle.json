@@ -1,0 +1,100 @@
+[
+{
+    "Environment": [
+    {
+      "Name": "AWS_PROFILE_NAME_SOURCE",
+      "Value": "${bamboo.AWS_PROFILE_SOURCE}"
+    },
+    {
+      "Name": "AWS_PROFILE_NAME_TARGET",
+      "Value": "${bamboo.AWS_PROFILE_TARGET}"
+    },
+    {
+      "Name": "AWS_PROFILE_NAME_SQS",
+      "Value": "${bamboo.AWS_PROFILE_SQS}"
+    },
+    {
+      "Name": "SQS_URL",
+      "Value": "${bamboo.inject.SQS_URL}"
+    },
+    {
+      "Name": "AWS_BUCKET_SOURCE",
+      "Value": "${bamboo.AWS_BUCKET_SOURCE}"
+    },
+    {
+      "Name": "AWS_BUCKET_TARGET",
+      "Value": "${bamboo.AWS_BUCKET_TARGET}"
+    },
+    {
+      "Name": "GS_URI",
+      "Value": "${bamboo.GS_URI}"
+    },
+    {
+      "Name": "PREFIX_TARGET",
+      "Value": "${bamboo.PREFIX_TARGET}"
+    }
+    ],
+    "secrets": [
+    {
+      "name": "SECRET_KEY_SOURCE",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-secret-keys-LSd3Bz:${bamboo.AWS_PROFILE_SOURCE}::"
+    },
+    {
+      "name": "ACCESS_KEY_SOURCE",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-access-keys-wfN9gL:${bamboo.AWS_PROFILE_SOURCE}::"
+    },
+    {
+      "name": "SECRET_KEY_TARGET",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-secret-keys-LSd3Bz:${bamboo.AWS_PROFILE_TARGET}::"
+    },
+    {
+      "name": "ACCESS_KEY_TARGET",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-access-keys-wfN9gL:${bamboo.AWS_PROFILE_TARGET}::"
+    },
+    {
+      "name": "SECRET_KEY_SQS",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-secret-keys-LSd3Bz:${bamboo.AWS_PROFILE_SQS}::"
+    },
+    {
+      "name": "ACCESS_KEY_SQS",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-access-keys-wfN9gL:${bamboo.AWS_PROFILE_SQS}::"
+    },
+    {
+      "name": "GS_PRIVATE_KEY",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-private-sshkey-jwxWKO:${bamboo.GS_PROFILE}::"
+    },
+    {
+      "name": "GS_PRIVATE_KEY_ID",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-private-key-id-lfNqxQ:${bamboo.GS_PROFILE}::"
+    },
+    {
+      "name": "GS_PROJECT_ID",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-project-id-CW2HA8:${bamboo.GS_PROFILE}::"
+    },
+    {
+      "name": "GS_CLIENT_ID",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-client-id-IXE2aT:${bamboo.GS_PROFILE}::"
+    },
+    {
+      "name": "GS_CLIENT_EMAIL",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-client-email-KrGKVf:${bamboo.GS_PROFILE}::"
+    },
+    {
+      "name": "GS_CLIENT_CERT",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-client-x509-cert-url-nkVNIx:${bamboo.GS_PROFILE}::"
+    }
+    ],
+  "essential": true,
+  "image": "${bamboo.custom.aws.ecr.proxyEndpointDomain}/${bamboo.awsECRName}:${bamboo.awsECRTag}",
+  "name": "${bamboo.awsECRName}",
+  "logConfiguration": {
+    "logDriver": "awslogs",
+    "options": {
+      "awslogs-group": "${bamboo.awsTaskDefinition}",
+      "awslogs-region": "${bamboo.AWS_REGION}",
+      "awslogs-create-group": "true",
+      "awslogs-stream-prefix": "ecs"
+    }
+  }
+}
+]
