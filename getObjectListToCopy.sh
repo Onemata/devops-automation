@@ -1,6 +1,6 @@
 #!/bin/bash
 source ~/.bashrc
-set -x
+#set -x
 
 S3_OBJECTS_TO_ADD_TO_SQS=./s3_objects_to_copy.txt
 > ${S3_OBJECTS_TO_ADD_TO_SQS}
