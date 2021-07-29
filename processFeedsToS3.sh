@@ -135,6 +135,15 @@ do
         do
                 if [[ "${MessageBody}" != "None" ]] ; then
                         TargetObject="${MessageBody}"
+                        # Get output year
+                        year=`grep -o "output_year=...." <<< $object` ; year=${year#*=}
+                        # Get output month
+                        year=`grep -o "output_month=.." <<< $object` ; month=${month#*=}
+                        # Get output day
+                        year=`grep -o "output_day=.." <<< $object` ; day=${day#*=}
+                        object=
+                        TargetPrefix="dt=${year}${month}${day}"
+                        TargetObject=${TargetPrefix}/${MessageBody##*/}
                         #if [[ "$PREFIX_TARGET" != "" ]] ; then
                         #       TargetObject=${PREFIX_TARGET}/$MessageBody
                         #else
@@ -146,6 +155,7 @@ do
                         echo "TargetObject:   $TargetObject"
                         echo "Handle:         $ReceiptHandle"
                         SourceFileSize=`aws --profile AWS_SOURCE  s3api list-objects --bucket ${AWS_BUCKET_SOURCE} --prefix "$MessageBody" --query 'Contents[*].{Size: Size}' --output text`
+                        #aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$MessageBody - | aws --profile AWS_TARGET s3 cp - s3://${AWS_BUCKET_TARGET}/$TargetObject
                         aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$MessageBody - | aws --profile AWS_TARGET s3 cp - s3://${AWS_BUCKET_TARGET}/$TargetObject
 #                        aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$MessageBody - | gsutil cp - gs://${GS_URI}/$TargetObject
 #                       TargetFileSize=`aws --profile AWS_TARGET  s3api list-objects --bucket ${AWS_BUCKET_TARGET} --prefix "$TargetObject" --query 'Contents[*].{Size: Size}' --output text`
