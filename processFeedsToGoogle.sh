@@ -28,18 +28,19 @@ if [[ -z "${ACCESS_KEY_SOURCE}" ]] ; then
     exit 1
 fi
 
-if [[ -z "${AWS_PROFILE_NAME_TARGET}" ]] ; then
-    echo "Please set AWS_PROFILE_NAME_TARGET for location of SQS"
-    exit 1
-fi
-if [[ -z "${SECRET_KEY_TARGET}" ]] ; then
-    echo "Please set SECRET_KEY_TARGET for location of SQS"
-    exit 1
-fi
-if [[ -z "${ACCESS_KEY_TARGET}" ]] ; then
-    echo "Please set ACCESS_KEY_TARGET for location of SQS"
-    exit 1
-fi
+#if [[ -z "${AWS_PROFILE_NAME_TARGET}" ]] ; then
+#    echo "Please set AWS_PROFILE_NAME_TARGET for location of SQS"
+#    exit 1
+#fi
+
+#if [[ -z "${SECRET_KEY_TARGET}" ]] ; then
+#    echo "Please set SECRET_KEY_TARGET for location of SQS"
+#    exit 1
+#fi
+#if [[ -z "${ACCESS_KEY_TARGET}" ]] ; then
+#    echo "Please set ACCESS_KEY_TARGET for location of SQS"
+#    exit 1
+#fi
 
 if [[ -z "${SQS_URL}" ]] ; then
     echo "Please set SQS_URL for location of SQS"
@@ -56,10 +57,10 @@ fi
 #	exit 1
 #fi
 
-if [[ -z "${AWS_BUCKET_TARGET}" ]] ; then
-    echo "Please set AWS_BUCKET_TARGET for location of target bucket"
-    exit 1
-fi
+#if [[ -z "${AWS_BUCKET_TARGET}" ]] ; then
+#    echo "Please set AWS_BUCKET_TARGET for location of target bucket"
+#    exit 1
+#fi
 #if [[ -z "${AWS_PREFIX_TARGET}" ]] ; then
 #	AWS_PREFIX_TARGET=${AWS_PREFIX_SOURCE}
 #	#echo "Please set AWS_PREFIX_TARGET for location of target prefix"
@@ -86,9 +87,9 @@ echo "aws_access_key_id = ${ACCESS_KEY_SQS}" >> ~/.aws/credentials
 echo "[AWS_SOURCE]" >> ~/.aws/credentials
 echo "aws_secret_access_key = ${SECRET_KEY_SOURCE}"  >> ~/.aws/credentials
 echo "aws_access_key_id = ${ACCESS_KEY_SOURCE}" >> ~/.aws/credentials
-echo "[AWS_TARGET]" >> ~/.aws/credentials
-echo "aws_secret_access_key = ${SECRET_KEY_TARGET}"  >> ~/.aws/credentials
-echo "aws_access_key_id = ${ACCESS_KEY_TARGET}" >> ~/.aws/credentials
+#echo "[AWS_TARGET]" >> ~/.aws/credentials
+#echo "aws_secret_access_key = ${SECRET_KEY_TARGET}"  >> ~/.aws/credentials
+#echo "aws_access_key_id = ${ACCESS_KEY_TARGET}" >> ~/.aws/credentials
 
 chmod -R 600 ~/.aws ~/.boto ~/onemata.json
 
@@ -120,7 +121,7 @@ sed -i "s|__CLIENT_CERT__|${GS_CLIENT_CERT}|" ${gsServiceKeyFile}
 
 # Test access to Target S3 Location
 set -x
-aws --profile AWS_TARGET s3api get-bucket-acl --bucket ${AWS_BUCKET_TARGET}  --output text
+#aws --profile AWS_TARGET s3api get-bucket-acl --bucket ${AWS_BUCKET_TARGET}  --output text
 
 # Test access to Feeds Location for Checking the SQS
 aws --profile AWS_SQS --region us-west-2 sqs get-queue-attributes --queue-url "${SQS_URL}" --attribute-names ApproximateNumberOfMessages --output text
@@ -132,13 +133,14 @@ do
         while read MessageBody ReceiptHandle Other
         do
                 if [[ "${MessageBody}" != "None" ]] ; then
+                        TargetObject="${MessageBody}"
                         #if [[ "$PREFIX_TARGET" != "" ]] ; then
                         #       TargetObject=${PREFIX_TARGET}/$MessageBody
                         #else
                         #       TargetOjbect=$MessageBody
                         #fi
                         #TargetObject=${MessageBody%Onemata_Mobile_Location_Data_*}${MessageBody#*Onemata_Mobile_Location_Data_}
-                        TargetObject="${MessageBody/_1_/_2_}"
+                        #TargetObject="${MessageBody/_1_/_2_}"
                         echo "SourceObject:   $MessageBody"
                         echo "TargetObject:   $TargetObject"
                         echo "Handle:         $ReceiptHandle"
