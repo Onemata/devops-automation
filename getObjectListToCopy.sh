@@ -34,6 +34,7 @@ unset arrayEntry
 numOfTasks=1
 while read prefix ; do
 
+    prefix="${prefix}/output_year=2021/output_month=06"
     while read file size ; do
         if [[ $size -gt 999 ]] ; then
             # File is greater than 1K, so add to arrary
@@ -57,7 +58,8 @@ while read prefix ; do
 #done < <(aws --profile $profile s3api list-objects --bucket ${awsBucket} --prefix "spark-results/14206-us2/year=$YEAR/date=$YEAR-$MONTH" --query 'CommonPrefixes' --delimiter '/' --output text)
 #done < <(aws --profile ${awsProfileSource} s3api list-objects --bucket ${awsBucketSource} --prefix "${awsBasePrefixSource}" --query 'CommonPrefixes' --delimiter '/' --output text)
 #--query "Contents[?contains(Key, '202105')].[Key,Size]"
-done < <(aws --profile ${awsProfileSource} s3api list-objects --bucket ${awsBucketSource} --prefix "${awsBasePrefixSource}" --query 'CommonPrefixes' --delimiter '/' --output text)
+#done < <(aws --profile ${awsProfileSource} s3api list-objects --bucket ${awsBucketSource} --prefix "${awsBasePrefixSource}" --query 'CommonPrefixes' --delimiter '/' --output text)
+done < <(aws --profile ${awsProfileSource} s3api list-objects --bucket ${awsBucketSource} --prefix "location_country" --query 'CommonPrefixes' --delimiter '/' --output text)
 
         if [[ ${numTotalSizeOfAllFiles} -gt 1099511627776 ]] ; then
             numTotalSizeReadable=`perl -e "printf('%.2f', ${numTotalSizeOfAllFiles}/1099511627776)"`" TB"
