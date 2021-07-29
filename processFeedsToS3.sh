@@ -136,11 +136,11 @@ do
                 if [[ "${MessageBody}" != "None" ]] ; then
                         TargetObject="${MessageBody}"
                         # Get output year
-                        year=`grep -o "output_year=...." <<< $object` ; year=${year#*=}
+                        year=`grep -o "output_year=...." <<< $MessageBody` ; year=${year#*=}
                         # Get output month
-                        year=`grep -o "output_month=.." <<< $object` ; month=${month#*=}
+                        month=`grep -o "output_month=.." <<< $MessageBody` ; month=${month#*=}
                         # Get output day
-                        year=`grep -o "output_day=.." <<< $object` ; day=${day#*=}
+                        day=`grep -o "output_day=.." <<< $MessageBody` ; day=${day#*=}
                         object=
                         TargetPrefix="dt=${year}${month}${day}"
                         TargetObject=${TargetPrefix}/${MessageBody##*/}
