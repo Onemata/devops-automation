@@ -6,10 +6,6 @@
       "Value": "${bamboo.AWS_PROFILE_SOURCE}"
     },
     {
-      "Name": "AWS_PROFILE_NAME_TARGET",
-      "Value": "${bamboo.AWS_PROFILE_TARGET}"
-    },
-    {
       "Name": "AWS_PROFILE_NAME_SQS",
       "Value": "${bamboo.AWS_PROFILE_SQS}"
     },
@@ -20,10 +16,6 @@
     {
       "Name": "AWS_BUCKET_SOURCE",
       "Value": "${bamboo.AWS_BUCKET_SOURCE}"
-    },
-    {
-      "Name": "AWS_BUCKET_TARGET",
-      "Value": "${bamboo.AWS_BUCKET_TARGET}"
     },
     {
       "Name": "GS_URI",
@@ -42,14 +34,6 @@
     {
       "name": "ACCESS_KEY_SOURCE",
       "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-access-keys-wfN9gL:${bamboo.AWS_PROFILE_SOURCE}::"
-    },
-    {
-      "name": "SECRET_KEY_TARGET",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-secret-keys-LSd3Bz:${bamboo.AWS_PROFILE_TARGET}::"
-    },
-    {
-      "name": "ACCESS_KEY_TARGET",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-access-keys-wfN9gL:${bamboo.AWS_PROFILE_TARGET}::"
     },
     {
       "name": "SECRET_KEY_SQS",

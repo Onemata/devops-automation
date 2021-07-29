@@ -26,10 +26,6 @@
       "Value": "${bamboo.AWS_BUCKET_TARGET}"
     },
     {
-      "Name": "GS_URI",
-      "Value": "${bamboo.GS_URI}"
-    },
-    {
       "Name": "PREFIX_TARGET",
       "Value": "${bamboo.PREFIX_TARGET}"
     }
@@ -58,30 +54,6 @@
     {
       "name": "ACCESS_KEY_SQS",
       "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-access-keys-wfN9gL:${bamboo.AWS_PROFILE_SQS}::"
-    },
-    {
-      "name": "GS_PRIVATE_KEY",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-private-sshkey-jwxWKO:${bamboo.GS_PROFILE}::"
-    },
-    {
-      "name": "GS_PRIVATE_KEY_ID",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-private-key-id-lfNqxQ:${bamboo.GS_PROFILE}::"
-    },
-    {
-      "name": "GS_PROJECT_ID",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-project-id-CW2HA8:${bamboo.GS_PROFILE}::"
-    },
-    {
-      "name": "GS_CLIENT_ID",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-client-id-IXE2aT:${bamboo.GS_PROFILE}::"
-    },
-    {
-      "name": "GS_CLIENT_EMAIL",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-client-email-KrGKVf:${bamboo.GS_PROFILE}::"
-    },
-    {
-      "name": "GS_CLIENT_CERT",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-client-x509-cert-url-nkVNIx:${bamboo.GS_PROFILE}::"
     }
     ],
   "essential": true,
