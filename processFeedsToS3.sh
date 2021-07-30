@@ -156,7 +156,7 @@ do
                         echo "Handle:         $ReceiptHandle"
                         SourceFileSize=`aws --profile AWS_SOURCE  s3api list-objects --bucket ${AWS_BUCKET_SOURCE} --prefix "$MessageBody" --query 'Contents[*].{Size: Size}' --output text`
                         #aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$MessageBody - | aws --profile AWS_TARGET s3 cp - s3://${AWS_BUCKET_TARGET}/$TargetObject
-                        aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$MessageBody - | aws --profile AWS_TARGET s3 cp - s3://${AWS_BUCKET_TARGET}/$TargetObject
+                        aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$MessageBody - | aws --profile AWS_TARGET s3 cp --acl bucket-owner-full-control - s3://${AWS_BUCKET_TARGET}/$TargetObject
 #                        aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$MessageBody - | gsutil cp - gs://${GS_URI}/$TargetObject
 #                       TargetFileSize=`aws --profile AWS_TARGET  s3api list-objects --bucket ${AWS_BUCKET_TARGET} --prefix "$TargetObject" --query 'Contents[*].{Size: Size}' --output text`
 #                       if [[ $SourceFileSize == $TargetFileSize ]] ; then
