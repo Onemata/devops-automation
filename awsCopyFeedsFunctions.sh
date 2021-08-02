@@ -55,7 +55,7 @@ deleteSQSQueue () {
 CheckStatusOfTasks () {
     STATUS="STOPPED"
     getListOfTasks
-    for taskResource in ${arrListOfTasks[*]} ; do
+    for taskResourceArn in ${arrListOfTasks[*]} ; do
         #echo "${taskResource}"
         #taskResourceArn="${TASK_BASE_ARN}/${taskResource}"
         echo "Checking Task: ${taskResourceArn}"
