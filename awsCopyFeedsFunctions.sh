@@ -66,7 +66,16 @@ getListOfTasks () {
 
 CheckStatusOfTasks () {
     STATUS="STOPPED"
-    getListOfTasks
+    #getListOfTasks
+    unset arrListOfTasks
+
+    while read id taskArn
+    do
+        echo $taskArn
+        arrListOfTasks+=("$taskArn")
+
+    done < <(aws --region ${REGION} --profile ${PROFILE} ecs list-tasks  --cluster ${CLUSTER_ARN} --output text)
+
     for taskResourceArn in ${arrListOfTasks[*]} ; do
         #echo "${taskResource}"
         #taskResourceArn="${TASK_BASE_ARN}/${taskResource}"
