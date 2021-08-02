@@ -52,17 +52,17 @@ deleteSQSQueue () {
 #    done
 #}
 
-getListOfTasks () {
-    unset arrListOfTasks
-
-    while read id taskArn
-    do
-        echo $taskArn
-        arrListOfTasks+=("$taskArn")
-
-    done < <(aws --region ${REGION} --profile ${PROFILE} ecs list-tasks  --cluster ${CLUSTER_ARN} --output text)
-
-}
+#getListOfTasks () {
+#    unset arrListOfTasks
+#
+#    while read id taskArn
+#    do
+#        echo $taskArn
+#        arrListOfTasks+=("$taskArn")
+#
+#    done < <(aws --region ${REGION} --profile ${PROFILE} ecs list-tasks  --cluster ${CLUSTER_ARN} --output text)
+#
+#}
 
 CheckStatusOfTasks () {
     STATUS="STOPPED"
@@ -71,9 +71,7 @@ CheckStatusOfTasks () {
 
     while read id taskArn
     do
-        echo $taskArn
         arrListOfTasks+=("$taskArn")
-
     done < <(aws --region ${REGION} --profile ${PROFILE} ecs list-tasks  --cluster ${CLUSTER_ARN} --output text)
 
     for taskResourceArn in ${arrListOfTasks[*]} ; do
@@ -89,7 +87,7 @@ CheckStatusOfTasks () {
 
 
 areTasksRunning () {
-    set -x
+    #set -x
     STATUS="RUNNING"
     until [[ "${STATUS}" == "STOPPED" ]] ; do
 
