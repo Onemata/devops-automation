@@ -72,6 +72,7 @@ getListOfTasks () {
 
     while read id taskArn
     do
+        echo $taskArn
         arrListOfTasks+=("$taskArn")
 
     done < <(aws --region ${REGION} --profile ${PROFILE} ecs list-tasks  --cluster ${CLUSTER_ARN} --output text)
@@ -79,6 +80,7 @@ getListOfTasks () {
 }
 
 areTasksRunning () {
+    set -x
     STATUS="RUNNING"
     until [[ "${STATUS}" == "STOPPED" ]] ; do
 
