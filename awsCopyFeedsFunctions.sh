@@ -39,11 +39,25 @@ deleteSQSQueue () {
     fi
 }
 
+#CheckStatusOfTasks () {
+#    STATUS="STOPPED"
+#    for taskResource in ${RESOURCES//;/ } ; do
+#        #echo "${taskResource}"
+#        taskResourceArn="${TASK_BASE_ARN}/${taskResource}"
+#        echo "Checking Task: ${taskResourceArn}"
+#        STATUS=`aws --region ${REGION} --profile ${PROFILE} ecs describe-tasks  --cluster ${CLUSTER_ARN} --tasks ${taskResourceArn} --query 'tasks[*].{lastStatus: lastStatus}' --output text`
+#        if [[ "${STATUS}" == "RUNNING" ]] ; then
+#            break
+#        fi
+#    done
+#}
+
 CheckStatusOfTasks () {
     STATUS="STOPPED"
-    for taskResource in ${RESOURCES//;/ } ; do
+    getListOfTasks
+    for taskResource in ${arrListOfTasks[*]} ; do
         #echo "${taskResource}"
-        taskResourceArn="${TASK_BASE_ARN}/${taskResource}"
+        #taskResourceArn="${TASK_BASE_ARN}/${taskResource}"
         echo "Checking Task: ${taskResourceArn}"
         STATUS=`aws --region ${REGION} --profile ${PROFILE} ecs describe-tasks  --cluster ${CLUSTER_ARN} --tasks ${taskResourceArn} --query 'tasks[*].{lastStatus: lastStatus}' --output text`
         if [[ "${STATUS}" == "RUNNING" ]] ; then
@@ -52,11 +66,24 @@ CheckStatusOfTasks () {
     done
 }
 
+
+getListOfTasks () {
+    unset arrListOfTasks
+
+    while read id taskArn
+    do
+        arrListOfTasks+=("$taskArn")
+
+    done < <(aws --region ${REGION} --profile ${PROFILE} ecs list-tasks  --cluster ${CLUSTER_ARN} --output text)
+
+}
+
 areTasksRunning () {
     STATUS="RUNNING"
     until [[ "${STATUS}" == "STOPPED" ]] ; do
 
         CheckStatusOfTasks
+
         if [[ "${STATUS}" == "RUNNING" ]] ; then
             echo "Tasks are still running... Sleeping 30 seconds"
             sleep 30
