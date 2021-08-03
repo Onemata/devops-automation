@@ -1,6 +1,6 @@
 #!/bin/bash
 source ~/.bashrc
-set -x
+#set -x
 
 S3_OBJECTS_TO_ADD_TO_SQS=./s3_objects_to_copy.txt
 > ${S3_OBJECTS_TO_ADD_TO_SQS}
@@ -36,7 +36,7 @@ while read prefix ; do
     basePrefix=$prefix
     basePrefix="${prefix}output_year=2021/output_month=06"
     while read file size ; do
-        if [[ $size -gt 999 ]] ; then
+        if [[ $size -gt 99 ]] ; then
             # File is greater than 1K, so add to arrary
             arrayOfFiles[c++]=$file
         ((numFileCount+=1))
