@@ -158,13 +158,15 @@ do
                         echo "Source Object Size: $sourceObjectSize"
                         echo "Target Object Size: $targetObjectSize"
 
-                        set -x
-                       if [[ $SourceFileSize -eq $TargetFileSize ]] ; then
+                        # Determine if source and target objects match size
+                       if [[ $sourceObjectSize -eq $targetObjectSize ]] ; then
                             aws --profile AWS_SQS --region us-west-2 sqs delete-message --queue-url "${SQS_URL}" --receipt-handle "$ReceiptHandle"
                        else
-                            aws --profile AWS_SQS --region us-west-2 sqs delete-message --queue-url "${SQS_URL}" --receipt-handle "$ReceiptHandle"
+                            echo "Source and Target object sizes do not match:"
+                            echo "Source Object Size: $sourceObjectSize"
+                            echo "Target Object Size: $targetObjectSize"
                        fi
-                       set -
+
                 else
                         break 2
                 fi
