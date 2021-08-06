@@ -130,13 +130,13 @@ set -
 
 while [[ 0 -eq 0 ]]
 do
-        while read MessageBody ReceiptHandle Other
-        do
-                if [[ "${MessageBody}" != "None" ]] ; then
-                        TargetObject="${MessageBody}"
-                        #if [[ "$PREFIX_TARGET" != "" ]] ; then
-                        #       TargetObject=${PREFIX_TARGET}/$MessageBody
-                        #else
+    while read MessageBody ReceiptHandle Other
+    do
+        if [[ "${MessageBody}" != "None" ]] ; then
+            TargetObject="${MessageBody}"
+#            if [[ "$PREFIX_TARGET" != "" ]] ; then
+#                TargetObject=${PREFIX_TARGET}/$MessageBody
+#                else
                         #       TargetOjbect=$MessageBody
                         #fi
                         #TargetObject=${MessageBody%Onemata_Mobile_Location_Data_*}${MessageBody#*Onemata_Mobile_Location_Data_}
@@ -144,13 +144,27 @@ do
                         echo "SourceObject:   $MessageBody"
                         echo "TargetObject:   $TargetObject"
                         echo "Handle:         $ReceiptHandle"
-                        SourceFileSize=`aws --profile AWS_SOURCE  s3api list-objects --bucket ${AWS_BUCKET_SOURCE} --prefix "$MessageBody" --query 'Contents[*].{Size: Size}' --output text`
+
+                        # Get file size from source location
+                        sourceObjectSize=`aws --profile AWS_SOURCE  s3api list-objects --bucket ${AWS_BUCKET_SOURCE} --prefix "$MessageBody" --query 'Contents[*].{Size: Size}' --output text`
+
 #                       aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$MessageBody - | aws --profile AWS_TARGET s3 cp - s3://${AWS_BUCKET_TARGET}/$TargetObject
                         aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$MessageBody - | gsutil cp - gs://${GS_URI}/$TargetObject
-#                       TargetFileSize=`aws --profile AWS_TARGET  s3api list-objects --bucket ${AWS_BUCKET_TARGET} --prefix "$TargetObject" --query 'Contents[*].{Size: Size}' --output text`
-#                       if [[ $SourceFileSize == $TargetFileSize ]] ; then
-                                aws --profile AWS_SQS --region us-west-2 sqs delete-message --queue-url "${SQS_URL}" --receipt-handle "$ReceiptHandle"
-#                       fi
+
+                        # Get file size from target
+                        read targetObjectSize date object < <(gsutil ls -l gs://${GS_URI}/$TargetObject)
+#                        TargetFileSize=`aws --profile AWS_TARGET  s3api list-objects --bucket ${AWS_BUCKET_TARGET} --prefix "$TargetObject" --query 'Contents[*].{Size: Size}' --output text`
+
+                        echo "Source Object Size: $sourceObjectSize"
+                        echo "Target Object Size: $targetObjectSize"
+
+                        set -x
+                       if [[ $SourceFileSize -eq $TargetFileSize ]] ; then
+                            aws --profile AWS_SQS --region us-west-2 sqs delete-message --queue-url "${SQS_URL}" --receipt-handle "$ReceiptHandle"
+                       else
+                            aws --profile AWS_SQS --region us-west-2 sqs delete-message --queue-url "${SQS_URL}" --receipt-handle "$ReceiptHandle"
+                       fi
+                       set -
                 else
                         break 2
                 fi
