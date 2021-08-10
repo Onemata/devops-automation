@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+
 
 # Include common functions
 source ./processFeedsFunctions.sh
@@ -10,6 +10,7 @@ fValidateEnvironmentVariables
 # Write/Add Credentials
 fAddCredentials
 
+set -x
 # Make sure we can access SQS Queue
 fValidateAccessToSQSQueue
 RC=$?
@@ -35,7 +36,7 @@ fValidateAccessToTargetBucket
 RC=$?
 
 if [[ $RC -ne 0 ]] ; then
-    echo "ERROR:  Unable to access target bucket [${AWS_BUCKET_TARGET}${GS_URI}]"
+    echo "ERROR:  Unable to access target bucket [${TARGET_BUCKET}]"
     echo "Exiting...."
     exit 1
 fi
