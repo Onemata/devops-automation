@@ -47,12 +47,13 @@ if [[ $RC -ne 0 ]] ; then
 fi
 
 sleep 2
+set -x
 while [[ 0 -eq 0 ]]
 do
     while read MessageBody ReceiptHandle Other
     do
         if [[ "${MessageBody}" != "None" ]] ; then
-            set -x
+
             sourceObject="${MessageBody}"
             object=${MessageBody##*/}
 
@@ -77,7 +78,7 @@ do
                 echo "ERROR: target object does not match size of source object"
                 exit 1
             fi
-            set -
+
         else
             echo "No more messeges in queue"
             break 2
