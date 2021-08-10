@@ -11,7 +11,9 @@ fValidateEnvironmentVariables
 fAddCredentials
 
 set -x
+sleep 2
 # Make sure we can access SQS Queue
+echo "Checking access to SQS Queue"
 fValidateAccessToSQSQueue
 RC=$?
 
@@ -21,7 +23,9 @@ if [[ $RC -ne 0 ]] ; then
     exit 1
 fi
 
+sleep 2
 # Make sure we can access the source bucket
+echo "Checking access to source bucket"
 fValidateAccessToSourceBucket
 RC=$?
 
@@ -31,7 +35,9 @@ if [[ $RC -ne 0 ]] ; then
     exit 1
 fi
 
+sleep 2
 # Make sure we can access the target bucket
+echo "Checking access to target bucket"
 fValidateAccessToTargetBucket
 RC=$?
 
@@ -41,29 +47,36 @@ if [[ $RC -ne 0 ]] ; then
     exit 1
 fi
 
+sleep 2
 while [[ 0 -eq 0 ]]
 do
     while read MessageBody ReceiptHandle Other
     do
-        sourceObject="${MessageBody}"
+        if [[ "${MessageBody}" != "None" ]] ; then
 
-        targetPrefix=`fTransformTargetPrefix "${sourceObject}" "${PREFIX_TEMPLATE}"`
-        object=`fTransformTargetObject "${sourceObject}" "${OBJECT_TEMPLATE}"`
+            sourceObject="${MessageBody}"
 
-        targetObject="${targetPrefix}${object}"
+            targetPrefix=`fTransformTargetPrefix "${sourceObject}" "${PREFIX_TEMPLATE}"`
+            object=`fTransformTargetObject "${sourceObject}" "${OBJECT_TEMPLATE}"`
 
-        # Copy Object to Target Location
-        fCopyObject "${sourceObject}" "${targetObject}"
+            targetObject="${targetPrefix}${object}"
 
-        # Validate Object in Target Location
-        fValidateTargetObject "${sourceObject}" "${sourceObject}"
-        RC=$?
+            # Copy Object to Target Location
+            fCopyObject "${sourceObject}" "${targetObject}"
 
-        if [[ $RC -eq 0 ]] ; then
-            # Remove Item from SQS Queue
-            fDeleteMessageFromQueue "${ReceiptHandle}"
+            # Validate Object in Target Location
+            fValidateTargetObject "${sourceObject}" "${sourceObject}"
+            RC=$?
+
+            if [[ $RC -eq 0 ]] ; then
+                # Remove Item from SQS Queue
+                fDeleteMessageFromQueue "${ReceiptHandle}"
+            else
+                echo "ERROR: target object does not match size of source object"
+            fi
         else
-            echo "ERROR: target object does not match size of source object"
+            echo "No more messeges in queue"
+            break 2
         fi
 
     done < <(fFetchMessageFromQueue)
