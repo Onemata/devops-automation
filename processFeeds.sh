@@ -81,6 +81,7 @@ do
 
         else
             echo "No more messeges in queue"
+            exit 0
             break 2
         fi
 
@@ -90,6 +91,5 @@ do
 done
 
 
-# Copy
 
-fValidateTargetObject
+
