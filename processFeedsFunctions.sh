@@ -192,10 +192,10 @@ fValidateAccessToSourceBucket () {
 #==============================================================================
 fValidateAccessToTargetBucket () {
     if [[ "${TARGET_PLATFORM}" == "aws" ]] ; then
-        aws --profile AWS_TARGET s3 ls s3://${AWS_BUCKET_TARGET} --output text
+        aws --profile AWS_TARGET s3 ls s3://${TARGET_BUCKET} --output text
         return_code=$?
     elif [[ "${TARGET_PLATFORM}" == "google" ]] ; then
-        gsutil ls -l gs://${GS_URI}/
+        gsutil ls -l gs://${TARGET_BUCKET}/
         return_code=$?
     fi
     return $return_code
@@ -211,10 +211,10 @@ fValidateTargetObject () {
     sourceObjectSize=`aws --profile AWS_SOURCE  s3api list-objects --bucket ${AWS_BUCKET_SOURCE} --prefix "$MessageBody" --query 'Contents[*].{Size: Size}' --output text`
 
     if [[ "${TARGET_PLATFORM}" == "aws" ]] ; then
-        targetObjectSize=`aws --profile AWS_TARGET  s3api list-objects --bucket ${AWS_BUCKET_TARGET} --prefix "$targetObject" --query 'Contents[*].{Size: Size}' --output text`
+        targetObjectSize=`aws --profile AWS_TARGET  s3api list-objects --bucket ${TARGET_BUCKET} --prefix "$targetObject" --query 'Contents[*].{Size: Size}' --output text`
 
     elif [[ "${TARGET_PLATFORM}" == "google" ]] ; then
-        read targetObjectSize date object < <(gsutil ls -l gs://${GS_URI}/$targetObject)
+        read targetObjectSize date object < <(gsutil ls -l gs://${TARGET_BUCKET}/$targetObject)
     fi
 
     if [[ $sourceObjectSize -eq $targetObjectSize ]] ; then
@@ -285,9 +285,9 @@ fCopyObject () {
     target=$2
 
     if [[ "${TARGET_PLATFORM}" == "aws" ]] ; then
-        aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$source - | aws --profile AWS_TARGET s3 cp --acl bucket-owner-full-control - s3://${AWS_BUCKET_TARGET}/$target
+        aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$source - | aws --profile AWS_TARGET s3 cp --acl bucket-owner-full-control - s3://${TARGET_BUCKET}/$target
     elif [[ "${TARGET_PLATFORM}" == "google" ]] ; then
-        aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$source - | gsutil cp - gs://${GS_URI}/$target
+        aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$source - | gsutil cp - gs://${TARGET_BUCKET}/$target
     fi
 }
 
