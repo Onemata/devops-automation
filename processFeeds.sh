@@ -65,7 +65,7 @@ do
             fCopyObject "${sourceObject}" "${targetObject}"
 
             # Validate Object in Target Location
-            fValidateTargetObject "${sourceObject}" "${sourceObject}"
+            fValidateTargetObject "${sourceObject}" "${targetObject}"
             RC=$?
 
             if [[ $RC -eq 0 ]] ; then
@@ -73,6 +73,7 @@ do
                 fDeleteMessageFromQueue "${ReceiptHandle}"
             else
                 echo "ERROR: target object does not match size of source object"
+                exit 1
             fi
         else
             echo "No more messeges in queue"
