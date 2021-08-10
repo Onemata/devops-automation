@@ -181,9 +181,7 @@ fValidateAccessToSQSQueue () {
 #==============================================================================
 fValidateAccessToSourceBucket () {
     # Test access to Source S3 Location
-    #return 0
-    #aws --profile AWS_SOURCE s3api list-objects --bucket ${AWS_BUCKET_SOURCE} --prefix "${AWS_PREFIX_SOURCE}" --query 'CommonPrefixes' --delimiter '/' --output text
-
+    return 0
     aws --profile AWS_SOURCE s3 ls s3://${AWS_BUCKET_SOURCE} --output text
     return $?
 }
