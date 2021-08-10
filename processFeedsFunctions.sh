@@ -147,6 +147,9 @@ fAddAWSCredentials () {
 fAddGoogleCredentials () {
 
     gsServiceKeyFile=~/onemata.json
+
+    cp -v ./.boto ~/.boto
+    cp -v ./onemata.json ${gsServiceKeyFile}
     chmod -R 600 ~/.boto ${gsServiceKeyFile}
 
     # Update the .boto file with the location of the onemata.json file
