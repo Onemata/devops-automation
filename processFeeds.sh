@@ -47,7 +47,7 @@ if [[ $RC -ne 0 ]] ; then
 fi
 
 sleep 2
-set -x
+
 while [[ 0 -eq 0 ]]
 do
     while read MessageBody ReceiptHandle Other
@@ -55,14 +55,18 @@ do
         if [[ "${MessageBody}" != "None" ]] ; then
 
             sourceObject="${MessageBody}"
+            echo "SOURCE:  ${sourceObject}"
+
             object=${MessageBody##*/}
+            echo "OBJECT:  ${object}"
 
             targetPrefix=`fTransformTargetPrefix "${sourceObject}" "${TARGET_PREFIX}"`
-
+            echo "PREFIX:  ${targetPrefix}"
 
             #object=`fTransformTargetObject "${sourceObject}" "${OBJECT_TEMPLATE}"`
 
             targetObject="${targetPrefix}/${object}"
+            echo "TARGET:  ${targetObject}"
 
             # Copy Object to Target Location
             fCopyObject "${sourceObject}" "${targetObject}"
