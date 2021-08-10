@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export TARGET_PLATFORM="aws"
+
 ####  Validate that ENVIRONMENT VARIABLES are set
 
 if [[ -z "${AWS_PROFILE_NAME_SQS}" ]] ; then

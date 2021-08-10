@@ -7,7 +7,7 @@
     },
     {
       "Name": "AWS_PROFILE_NAME_TARGET",
-      "Value": "${bamboo.AWS_PROFILE_TARGET}"
+      "Value": "${bamboo.TARGET_PROFILE}"
     },
     {
       "Name": "AWS_PROFILE_NAME_SQS",
@@ -22,12 +22,20 @@
       "Value": "${bamboo.AWS_BUCKET_SOURCE}"
     },
     {
-      "Name": "AWS_BUCKET_TARGET",
-      "Value": "${bamboo.AWS_BUCKET_TARGET}"
+      "Name": "TARGET_BUCKET",
+      "Value": "${bamboo.TARGET_BUCKET}"
     },
     {
-      "Name": "PREFIX_TARGET",
-      "Value": "${bamboo.PREFIX_TARGET}"
+      "Name": "TARGET_PREFIX",
+      "Value": "${bamboo.TARGET_PREFIX}"
+    },
+    {
+      "Name": "TARGET_PLATFORM",
+      "Value": "${bamboo.TARGET_PLATFORM}"
+    },
+    {
+      "Name": "AWS_REGION",
+      "Value": "${bamboo.AWS_REGION}"
     }
     ],
     "secrets": [
@@ -41,11 +49,11 @@
     },
     {
       "name": "SECRET_KEY_TARGET",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-secret-keys-LSd3Bz:${bamboo.AWS_PROFILE_TARGET}::"
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-secret-keys-LSd3Bz:${bamboo.TARGET_PROFILE}::"
     },
     {
       "name": "ACCESS_KEY_TARGET",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-access-keys-wfN9gL:${bamboo.AWS_PROFILE_TARGET}::"
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-access-keys-wfN9gL:${bamboo.TARGET_PROFILE}::"
     },
     {
       "name": "SECRET_KEY_SQS",

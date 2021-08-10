@@ -18,12 +18,20 @@
       "Value": "${bamboo.AWS_BUCKET_SOURCE}"
     },
     {
-      "Name": "GS_URI",
-      "Value": "${bamboo.GS_URI}"
+      "Name": "TARGET_BUCKET",
+      "Value": "${bamboo.TARGET_BUCKET}"
     },
     {
-      "Name": "PREFIX_TARGET",
-      "Value": "${bamboo.PREFIX_TARGET}"
+      "Name": "TARGET_PREFIX",
+      "Value": "${bamboo.TARGET_PREFIX}"
+    },
+    {
+      "Name": "TARGET_PLATFORM",
+      "Value": "${bamboo.TARGET_PLATFORM}"
+    },
+    {
+      "Name": "AWS_REGION",
+      "Value": "${bamboo.AWS_REGION}"
     }
     ],
     "secrets": [
@@ -45,27 +53,27 @@
     },
     {
       "name": "GS_PRIVATE_KEY",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-private-sshkey-jwxWKO:${bamboo.GS_PROFILE}::"
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-private-sshkey-jwxWKO:${bamboo.TARGET_PROFILE}::"
     },
     {
       "name": "GS_PRIVATE_KEY_ID",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-private-key-id-lfNqxQ:${bamboo.GS_PROFILE}::"
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-private-key-id-lfNqxQ:${bamboo.TARGET_PROFILE}::"
     },
     {
       "name": "GS_PROJECT_ID",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-project-id-CW2HA8:${bamboo.GS_PROFILE}::"
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-project-id-CW2HA8:${bamboo.TARGET_PROFILE}::"
     },
     {
       "name": "GS_CLIENT_ID",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-client-id-IXE2aT:${bamboo.GS_PROFILE}::"
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-client-id-IXE2aT:${bamboo.TARGET_PROFILE}::"
     },
     {
       "name": "GS_CLIENT_EMAIL",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-client-email-KrGKVf:${bamboo.GS_PROFILE}::"
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-client-email-KrGKVf:${bamboo.TARGET_PROFILE}::"
     },
     {
       "name": "GS_CLIENT_CERT",
-      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-client-x509-cert-url-nkVNIx:${bamboo.GS_PROFILE}::"
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:gs-client-x509-cert-url-nkVNIx:${bamboo.TARGET_PROFILE}::"
     }
     ],
   "essential": true,

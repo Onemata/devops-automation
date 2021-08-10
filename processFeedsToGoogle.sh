@@ -1,72 +1,8 @@
 #!/bin/bash
 
-####  Validate that ENVIRONMENT VARIABLES are set
+source processFeedsCommon.sh
 
-if [[ -z "${AWS_PROFILE_NAME_SQS}" ]] ; then
-    echo "Please set AWS_PROFILE_NAME_SQS for location of SQS"
-    exit 1
-fi
-if [[ -z "${SECRET_KEY_SQS}" ]] ; then
-    echo "Please set SECRET_KEY_SQS for location of SQS"
-    exit 1
-fi
-if [[ -z "${ACCESS_KEY_SQS}" ]] ; then
-    echo "Please set ACCESS_KEY_SQS for location of SQS"
-    exit 1
-fi
-
-if [[ -z "${AWS_PROFILE_NAME_SOURCE}" ]] ; then
-    echo "Please set AWS_PROFILE_NAME_SOURCE for location of SQS"
-    exit 1
-fi
-if [[ -z "${SECRET_KEY_SOURCE}" ]] ; then
-    echo "Please set SECRET_KEY_SOURCE for location of SQS"
-    exit 1
-fi
-if [[ -z "${ACCESS_KEY_SOURCE}" ]] ; then
-    echo "Please set ACCESS_KEY_SOURCE for location of SQS"
-    exit 1
-fi
-
-#if [[ -z "${AWS_PROFILE_NAME_TARGET}" ]] ; then
-#    echo "Please set AWS_PROFILE_NAME_TARGET for location of SQS"
-#    exit 1
-#fi
-
-#if [[ -z "${SECRET_KEY_TARGET}" ]] ; then
-#    echo "Please set SECRET_KEY_TARGET for location of SQS"
-#    exit 1
-#fi
-#if [[ -z "${ACCESS_KEY_TARGET}" ]] ; then
-#    echo "Please set ACCESS_KEY_TARGET for location of SQS"
-#    exit 1
-#fi
-
-if [[ -z "${SQS_URL}" ]] ; then
-    echo "Please set SQS_URL for location of SQS"
-    exit 1
-fi
-
-if [[ -z "${AWS_BUCKET_SOURCE}" ]] ; then
-    echo "Please set AWS_BUCKET_SOURCE for location of source bucket"
-    exit 1
-fi
-
-#if [[ -z "${AWS_PREFIX_SOURCE}" ]] ; then
-#	echo "Please set AWS_PREFIX_SOURCE for location of source prefix"
-#	exit 1
-#fi
-
-#if [[ -z "${AWS_BUCKET_TARGET}" ]] ; then
-#    echo "Please set AWS_BUCKET_TARGET for location of target bucket"
-#    exit 1
-#fi
-#if [[ -z "${AWS_PREFIX_TARGET}" ]] ; then
-#	AWS_PREFIX_TARGET=${AWS_PREFIX_SOURCE}
-#	#echo "Please set AWS_PREFIX_TARGET for location of target prefix"
-#	#exit 1
-#fi
-
+export TARGET_PLATFORM="google"
 
 #set -x
 # Pause 10 Seconds before starting.
