@@ -10,7 +10,6 @@ fValidateEnvironmentVariables
 # Write/Add Credentials
 fAddCredentials
 
-set -x
 sleep 2
 # Make sure we can access SQS Queue
 echo "Checking access to SQS Queue"
@@ -53,10 +52,13 @@ do
     while read MessageBody ReceiptHandle Other
     do
         if [[ "${MessageBody}" != "None" ]] ; then
-
+            set -x
             sourceObject="${MessageBody}"
+            object=${MessageBody##*/}
 
             targetPrefix=`fTransformTargetPrefix "${sourceObject}" "${TARGET_PREFIX}"`
+
+
             #object=`fTransformTargetObject "${sourceObject}" "${OBJECT_TEMPLATE}"`
 
             targetObject="${targetPrefix}${object}"
@@ -75,6 +77,7 @@ do
                 echo "ERROR: target object does not match size of source object"
                 exit 1
             fi
+            set -
         else
             echo "No more messeges in queue"
             break 2
