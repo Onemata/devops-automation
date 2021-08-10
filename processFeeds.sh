@@ -61,7 +61,7 @@ do
 
             #object=`fTransformTargetObject "${sourceObject}" "${OBJECT_TEMPLATE}"`
 
-            targetObject="${targetPrefix}${object}"
+            targetObject="${targetPrefix}/${object}"
 
             # Copy Object to Target Location
             fCopyObject "${sourceObject}" "${targetObject}"
