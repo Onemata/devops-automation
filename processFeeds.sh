@@ -56,8 +56,8 @@ do
 
             sourceObject="${MessageBody}"
 
-            targetPrefix=`fTransformTargetPrefix "${sourceObject}" "${PREFIX_TEMPLATE}"`
-            object=`fTransformTargetObject "${sourceObject}" "${OBJECT_TEMPLATE}"`
+            targetPrefix=`fTransformTargetPrefix "${sourceObject}" "${TARGET_PREFIX}"`
+            #object=`fTransformTargetObject "${sourceObject}" "${OBJECT_TEMPLATE}"`
 
             targetObject="${targetPrefix}${object}"
 

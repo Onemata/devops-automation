@@ -240,6 +240,10 @@ fTransformTargetPrefix () {
 
     #object=${sourceObject##*/}
     prefix=${sourceObject%/*}
+    if [[ "${targetPrefixFormat}" == "" ]] ; then
+        echo "${prefix}"
+        return 0
+    fi
 
     year=`grep -o "output_year=...." <<< $prefix` ; year=${year#*=}
     month=`grep -o "output_month=.." <<< $prefix` ; month=${month#*=}
@@ -250,6 +254,7 @@ fTransformTargetPrefix () {
     newPrefix="${newPrefix/\{day\}/${day}}"
 
     echo "${newPrefix}"
+    return 0
 }
 
 #==============================================================================
@@ -259,7 +264,7 @@ fTransformTargetPrefix () {
 fTransformTargetObject () {
 
     sourceObject=$1
-    echo "Function:  $0: not used yet"
+    #echo "Function:  $0: not used yet"
 
     object=${sourceObject##*/}
     echo "${object}"
