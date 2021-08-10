@@ -206,15 +206,16 @@ fValidateAccessToTargetBucket () {
 #-
 #==============================================================================
 fValidateTargetObject () {
-    targetObject=$1
+    source=$1
+    target=$2
 
-    sourceObjectSize=`aws --profile AWS_SOURCE  s3api list-objects --bucket ${AWS_BUCKET_SOURCE} --prefix "$MessageBody" --query 'Contents[*].{Size: Size}' --output text`
+    sourceObjectSize=`aws --profile AWS_SOURCE  s3api list-objects --bucket ${AWS_BUCKET_SOURCE} --prefix "$source" --query 'Contents[*].{Size: Size}' --output text`
 
     if [[ "${TARGET_PLATFORM}" == "aws" ]] ; then
-        targetObjectSize=`aws --profile AWS_TARGET  s3api list-objects --bucket ${TARGET_BUCKET} --prefix "$targetObject" --query 'Contents[*].{Size: Size}' --output text`
+        targetObjectSize=`aws --profile AWS_TARGET  s3api list-objects --bucket ${TARGET_BUCKET} --prefix "$target" --query 'Contents[*].{Size: Size}' --output text`
 
     elif [[ "${TARGET_PLATFORM}" == "google" ]] ; then
-        read targetObjectSize date object < <(gsutil ls -l gs://${TARGET_BUCKET}/$targetObject)
+        read targetObjectSize date object < <(gsutil ls -l gs://${TARGET_BUCKET}/$target)
     fi
 
     if [[ $sourceObjectSize -eq $targetObjectSize ]] ; then
