@@ -55,21 +55,21 @@ do
         if [[ "${MessageBody}" != "None" ]] ; then
 
             sourceObject="${MessageBody}"
-            echo "SOURCE:  ${sourceObject}"
+            #echo "SOURCE:  ${sourceObject}"
 
             object=${MessageBody##*/}
-            echo "OBJECT:  ${object}"
+            #echo "OBJECT:  ${object}"
 
             targetPrefix=`fTransformTargetPrefix "${sourceObject}" "${TARGET_PREFIX}"`
-            echo "PREFIX:  ${targetPrefix}"
+            #echo "PREFIX:  ${targetPrefix}"
 
             #object=`fTransformTargetObject "${sourceObject}" "${OBJECT_TEMPLATE}"`
 
             targetObject="${targetPrefix}/${object}"
-            echo "TARGET:  ${targetObject}"
+            #echo "TARGET:  ${targetObject}"
 
             # Copy Object to Target Location
-            echo "Copying ${sourceObject} TO ${targetObject}"
+            echo "Copying [${sourceObject}] TO [${targetObject}]"
             fCopyObject "${sourceObject}" "${targetObject}"
 
             # Validate Object in Target Location
@@ -79,7 +79,7 @@ do
 
             if [[ $RC -eq 0 ]] ; then
                 # Remove Item from SQS Queue
-                echo "Remove message from queue"
+                echo "Remove message from queue [${ReceiptHandle}]"
                 fDeleteMessageFromQueue "${ReceiptHandle}"
             else
                 echo "ERROR: target object does not match size of source object"
