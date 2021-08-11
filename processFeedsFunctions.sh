@@ -289,7 +289,7 @@ fTransformTargetObject () {
 #-
 #==============================================================================
 fFetchMessageFromQueue () {
-    echo "Fetching 10 messages at a time"
+    #echo "Fetching 10 messages at a time"
     aws --profile AWS_SQS --region ${AWS_REGION} sqs receive-message --queue-url "${SQS_URL}" --max-number-of-messages 10 --query 'Messages[*].{Body: Body, ReceiptHandle: ReceiptHandle}'  --output text
 
 }

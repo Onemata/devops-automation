@@ -92,7 +92,7 @@ do
             break 2
         fi
 
-    done < <(fFetchMessageFromQueue)
+    done < <(aws --profile AWS_SQS --region ${AWS_REGION} sqs receive-message --queue-url "${SQS_URL}" --max-number-of-messages 10 --query 'Messages[*].{Body: Body, ReceiptHandle: ReceiptHandle}'  --output text)
 
 
 done
