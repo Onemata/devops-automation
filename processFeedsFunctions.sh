@@ -262,10 +262,12 @@ fTransformTargetPrefix () {
     year=`grep -o "output_year=...." <<< $prefix` ; year=${year#*=}
     month=`grep -o "output_month=.." <<< $prefix` ; month=${month#*=}
     day=`grep -o "output_day=.." <<< $prefix` ; day=${day#*=}
+    country=`grep -o "location_country=.." <<< $prefix` ; country=${country#*=}
 
     newPrefix="${targetPrefixFormat/\{year\}/${year}}"
     newPrefix="${newPrefix/\{month\}/${month}}"
     newPrefix="${newPrefix/\{day\}/${day}}"
+    newPrefix="${newPrefix/\{country\}/${country}}"
 
     echo "${newPrefix}"
     return 0
