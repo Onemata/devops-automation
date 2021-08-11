@@ -13,7 +13,7 @@ fAddCredentials
 sleep 2
 # Make sure we can access SQS Queue
 echo "Checking access to SQS Queue"
-fValidateAccessToSQSQueue
+fValidateAccessToSQSQueue "${SQS_URL}"
 RC=$?
 
 if [[ $RC -ne 0 ]] ; then
@@ -25,7 +25,7 @@ fi
 sleep 2
 # Make sure we can access the source bucket
 echo "Checking access to source bucket"
-fValidateAccessToSourceBucket
+fValidateAccessToSourceBucket "${AWS_BUCKET_SOURCE}"
 RC=$?
 
 if [[ $RC -ne 0 ]] ; then
@@ -37,7 +37,7 @@ fi
 sleep 2
 # Make sure we can access the target bucket
 echo "Checking access to target bucket"
-fValidateAccessToTargetBucket
+fValidateAccessToTargetBucket "${TARGET_BUCKET}"
 RC=$?
 
 if [[ $RC -ne 0 ]] ; then
@@ -69,14 +69,17 @@ do
             echo "TARGET:  ${targetObject}"
 
             # Copy Object to Target Location
+            echo "Copying ${sourceObject} TO ${targetObject}"
             fCopyObject "${sourceObject}" "${targetObject}"
 
             # Validate Object in Target Location
+            echo "Validating file size"
             fValidateTargetObject "${sourceObject}" "${targetObject}"
             RC=$?
 
             if [[ $RC -eq 0 ]] ; then
                 # Remove Item from SQS Queue
+                echo "Remove message from queue"
                 fDeleteMessageFromQueue "${ReceiptHandle}"
             else
                 echo "ERROR: target object does not match size of source object"

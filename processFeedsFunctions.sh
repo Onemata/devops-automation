@@ -9,6 +9,7 @@ fValidateEnvironmentVariables () {
         "")     echo "No Target Platform specified.  Exiting."; exit 1 ;;
         google) echo "Target Platform:  ${TARGET_PLATFORM}"; fValidateEnvironmentVariablesForGooglePlatform ;;
         aws)    echo "Target Platform:  ${TARGET_PLATFORM}"; fValidateEnvironmentVariablesForAWSPlatform ;;
+        azure)  echo "Target Platform:  ${TARGET_PLATFORM} is not used yet.  Exiting"; exit 1 ;;
         *)      echo "Unknown Target Platform specified:  ${TARGET_PLATFORM}.  Exiting."; exit 1 ;;
     esac
 
@@ -169,9 +170,11 @@ fAddGoogleCredentials () {
 #-
 #==============================================================================
 fValidateAccessToSQSQueue () {
-    # Test access to the SQS Queue
+    queue_url=$1
 
-    aws --profile AWS_SQS --region ${AWS_REGION} sqs get-queue-attributes --queue-url "${SQS_URL}" --attribute-names ApproximateNumberOfMessages --output text
+    # Test access to the SQS Queue
+    echo "Validating Access to ${queue_url}"
+    aws --profile AWS_SQS --region ${AWS_REGION} sqs get-queue-attributes --queue-url "${queue_url}" --attribute-names ApproximateNumberOfMessages --output text
     return $?
 }
 
@@ -180,9 +183,11 @@ fValidateAccessToSQSQueue () {
 #-
 #==============================================================================
 fValidateAccessToSourceBucket () {
+    bucket=$1
     # Test access to Source S3 Location
     return 0
-    aws --profile AWS_SOURCE s3 ls s3://${AWS_BUCKET_SOURCE} --output text
+    echo "Validating Access to source bucket: ${bucket}"
+    aws --profile AWS_SOURCE s3 ls s3://${bucket} --output text
     return $?
 }
 
@@ -191,11 +196,19 @@ fValidateAccessToSourceBucket () {
 #-
 #==============================================================================
 fValidateAccessToTargetBucket () {
+    bucket=$1
+
     if [[ "${TARGET_PLATFORM}" == "aws" ]] ; then
-        aws --profile AWS_TARGET s3 ls s3://${TARGET_BUCKET} --output text
+        echo "Validating Access to target AWS bucket: ${bucket}"
+        aws --profile AWS_TARGET s3 ls s3://${bucket} --output text
         return_code=$?
     elif [[ "${TARGET_PLATFORM}" == "google" ]] ; then
-        gsutil ls -l gs://${TARGET_BUCKET}/
+        echo "Validating Access to target Google bucket: ${bucket}"
+        gsutil ls -l gs://${bucket}/
+        return_code=$?
+    elif [[ "${TARGET_PLATFORM}" == "azure" ]] ; then
+        echo "Validating Access to target Azure bucket: ${bucket}"
+        ####  Cli for Azure
         return_code=$?
     fi
     return $return_code
@@ -276,7 +289,7 @@ fTransformTargetObject () {
 #-
 #==============================================================================
 fFetchMessageFromQueue () {
-
+    echo "Fetching 10 messages at a time"
     aws --profile AWS_SQS --region ${AWS_REGION} sqs receive-message --queue-url "${SQS_URL}" --max-number-of-messages 10 --query 'Messages[*].{Body: Body, ReceiptHandle: ReceiptHandle}'  --output text
 
 }
@@ -291,9 +304,13 @@ fCopyObject () {
     target=$2
 
     if [[ "${TARGET_PLATFORM}" == "aws" ]] ; then
+        echo "Copying object to AWS S3 Bucket"
         aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$source - | aws --profile AWS_TARGET s3 cp --acl bucket-owner-full-control - s3://${TARGET_BUCKET}/$target
     elif [[ "${TARGET_PLATFORM}" == "google" ]] ; then
+        echo "Copying object to Google Bucket"
         aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$source - | gsutil cp - gs://${TARGET_BUCKET}/$target
+    elif [[ "${TARGET_PLATFORM}" == "azure" ]] ; then
+        echo "Copying object to Azure Bucket"
     fi
 }
 
