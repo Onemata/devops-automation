@@ -1,0 +1,76 @@
+[
+{
+    "Environment": [
+    {
+      "Name": "AWS_PROFILE_NAME_SOURCE",
+      "Value": "${bamboo.AWS_PROFILE_SOURCE}"
+    },
+    {
+      "Name": "AWS_PROFILE_NAME_SQS",
+      "Value": "${bamboo.AWS_PROFILE_SQS}"
+    },
+    {
+      "Name": "SQS_URL",
+      "Value": "${bamboo.inject.SQS_URL}"
+    },
+    {
+      "Name": "AWS_BUCKET_SOURCE",
+      "Value": "${bamboo.AWS_BUCKET_SOURCE}"
+    },
+    {
+      "Name": "TARGET_BUCKET",
+      "Value": "${bamboo.TARGET_BUCKET}"
+    },
+    {
+      "Name": "TARGET_PREFIX",
+      "Value": "${bamboo.TARGET_PREFIX}"
+    },
+    {
+      "Name": "TARGET_PLATFORM",
+      "Value": "${bamboo.TARGET_PLATFORM}"
+    },
+    {
+      "Name": "AWS_REGION",
+      "Value": "${bamboo.AWS_REGION}"
+    }
+    ],
+    "secrets": [
+    {
+      "name": "SECRET_KEY_SOURCE",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-secret-keys-LSd3Bz:${bamboo.AWS_PROFILE_SOURCE}::"
+    },
+    {
+      "name": "ACCESS_KEY_SOURCE",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-access-keys-wfN9gL:${bamboo.AWS_PROFILE_SOURCE}::"
+    },
+    {
+      "name": "SECRET_KEY_SQS",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-secret-keys-LSd3Bz:${bamboo.AWS_PROFILE_SQS}::"
+    },
+    {
+      "name": "ACCESS_KEY_SQS",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:aws-access-keys-wfN9gL:${bamboo.AWS_PROFILE_SQS}::"
+    },
+    {
+      "name": "AZ_PASSWORD",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:az-password-9wXe1T:${bamboo.TARGET_PROFILE}::"
+    },
+    {
+      "name": "AZ_USERNAME",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:az-username-80R6l9:${bamboo.TARGET_PROFILE}::"
+    }
+    ],
+  "essential": true,
+  "image": "${bamboo.custom.aws.ecr.proxyEndpointDomain}/${bamboo.awsECRName}:${bamboo.awsECRTag}",
+  "name": "${bamboo.awsECRName}",
+  "logConfiguration": {
+    "logDriver": "awslogs",
+    "options": {
+      "awslogs-group": "${bamboo.awsTaskDefinition}",
+      "awslogs-region": "${bamboo.AWS_REGION}",
+      "awslogs-create-group": "true",
+      "awslogs-stream-prefix": "ecs"
+    }
+  }
+}
+]
