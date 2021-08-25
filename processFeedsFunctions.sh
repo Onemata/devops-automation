@@ -78,10 +78,6 @@ fValidateEnvironmentVariablesForAzurePlatform () {
         exit 1
     fi
     #Setup pyenv
-    pyenv install 3.6.14
-    export PYENV_VERSION=3.6.14
-    pyenv versions
-    pyenv version
     pip install blobxfer
 }
 
