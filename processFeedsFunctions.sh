@@ -9,7 +9,7 @@ fValidateEnvironmentVariables () {
         "")     echo "No Target Platform specified.  Exiting."; exit 1 ;;
         google) echo "Target Platform:  ${TARGET_PLATFORM}"; fValidateEnvironmentVariablesForGooglePlatform ;;
         aws)    echo "Target Platform:  ${TARGET_PLATFORM}"; fValidateEnvironmentVariablesForAWSPlatform ;;
-        azure)  echo "Target Platform:  ${TARGET_PLATFORM} is not used yet.  Exiting"; exit 1 ;;
+        azure)  echo "Target Platform:  ${TARGET_PLATFORM}"; fValidateEnvironmentVariablesForAzurePlatform ;;
         *)      echo "Unknown Target Platform specified:  ${TARGET_PLATFORM}.  Exiting."; exit 1 ;;
     esac
 
@@ -58,6 +58,31 @@ fValidateEnvironmentVariablesCommon () {
         exit 1
     fi
 
+}
+
+#==============================================================================
+#-  Function:  fValidateEnvironmentVariablesForAzurePlatform
+#-
+#==============================================================================
+fValidateEnvironmentVariablesForAzurePlatform () {
+    if [[ -z "${AZ_USERNAME}" ]] ; then
+        echo "Please set AZ_USERNAME"
+        exit 1
+    fi
+    if [[ -z "${AZ_PASSWORD}" ]] ; then
+        echo "Please set AZ_PASSWORD"
+        exit 1
+    fi
+    if [[ -z "${AZ_ACCOUNT_NAME}" ]] ; then
+        echo "Please set AZ_ACCOUNT_NAME"
+        exit 1
+    fi
+    #Setup pyenv
+    pyenv install 3.6.14
+    export PYENV_VERSION=3.6.14
+    pyenv versions
+    pyenv version
+    pip install blobxfer
 }
 
 #==============================================================================
@@ -114,9 +139,24 @@ fAddCredentials () {
     fAddAWSCredentials
     if [[ "${TARGET_PLATFORM}" == "google" ]] ; then
         fAddGoogleCredentials
+    elif [[ "${TARGET_PLATFORM}" == "azure" ]] ; then
+        fAddAzureCredentials
     fi
 }
 
+#==============================================================================
+#-  Function:  fAddAzureCredentials
+#-
+#==============================================================================
+fAddAzureCredentials () {
+    # Do login action to create accessTokens.json
+    az login -u "${AZ_USERNAME}" -p "${AZ_PASSWORD}"
+    RC=$?
+    if [[ $RC -ne 0 ]] ; then
+        echo "Login to Azure not successful.  Exiting..."
+        exit 1
+    fi
+}
 #==============================================================================
 #-  Function:  fAddAWSCredentials
 #-
@@ -207,8 +247,9 @@ fValidateAccessToTargetBucket () {
         gsutil ls -l gs://${bucket}/
         return_code=$?
     elif [[ "${TARGET_PLATFORM}" == "azure" ]] ; then
-        echo "Validating Access to target Azure bucket: ${bucket}"
+        echo "Validating Access to target Azure bucket: ${bucket} for account: ${AZ_ACCOUNT_NAME}"
         ####  Cli for Azure
+        az storage blob list --account-name ${AZ_ACCOUNT_NAME} --container-name ${bucket} --output table --auth-mode login
         return_code=$?
     fi
     return $return_code
@@ -229,6 +270,8 @@ fValidateTargetObject () {
 
     elif [[ "${TARGET_PLATFORM}" == "google" ]] ; then
         read targetObjectSize date object < <(gsutil ls -l gs://${TARGET_BUCKET}/$target)
+    elif
+        targetObjectSize=`az storage blob list --account-name ${AZ_ACCOUNT_NAME} --container-name ${TARGET_BUCKET} --output tsv --auth-mode login --prefix "$target" --query "[*].[properties.contentLength]"`
     fi
 
     if [[ $sourceObjectSize -eq $targetObjectSize ]] ; then
@@ -313,6 +356,7 @@ fCopyObject () {
         aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$source - | gsutil cp - gs://${TARGET_BUCKET}/$target
     elif [[ "${TARGET_PLATFORM}" == "azure" ]] ; then
         echo "Copying object to Azure Bucket"
+        aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$source - | az storage blob upload --account-name ${AZ_ACCOUNT_NAME} --file - --container-name ${TARGET_BUCKET} --name $target --auth-mode login
     fi
 }
 

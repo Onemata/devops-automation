@@ -73,7 +73,7 @@ do
             fCopyObject "${sourceObject}" "${targetObject}"
 
             # Validate Object in Target Location
-            echo "Validating file size"
+            #echo "Validating file size"
             fValidateTargetObject "${sourceObject}" "${targetObject}"
             RC=$?
 
