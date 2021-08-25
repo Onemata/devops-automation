@@ -266,7 +266,8 @@ fValidateTargetObject () {
 
     elif [[ "${TARGET_PLATFORM}" == "google" ]] ; then
         read targetObjectSize date object < <(gsutil ls -l gs://${TARGET_BUCKET}/$target)
-    elif
+
+    elif [[ "${TARGET_PLATFORM}" == "azure" ]] ; then
         targetObjectSize=`az storage blob list --account-name ${AZ_ACCOUNT_NAME} --container-name ${TARGET_BUCKET} --output tsv --auth-mode login --prefix "$target" --query "[*].[properties.contentLength]"`
     fi
 
