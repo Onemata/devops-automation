@@ -30,6 +30,10 @@
       "Value": "${bamboo.TARGET_PLATFORM}"
     },
     {
+      "Name": "AZ_ACCOUNT_NAME",
+      "Value": "${bamboo.TARGET_PROFILE}"
+    },
+    {
       "Name": "AWS_REGION",
       "Value": "${bamboo.AWS_REGION}"
     }
