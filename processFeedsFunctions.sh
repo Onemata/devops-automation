@@ -77,8 +77,6 @@ fValidateEnvironmentVariablesForAzurePlatform () {
         echo "Please set AZ_ACCOUNT_NAME"
         exit 1
     fi
-    #Setup pyenv
-    pip install blobxfer
 }
 
 #==============================================================================
@@ -146,6 +144,8 @@ fAddCredentials () {
 #==============================================================================
 fAddAzureCredentials () {
     # Do login action to create accessTokens.json
+    echo "${AZ_USERNAME} : ${AZ_PASSWORD}"
+
     az login -u "${AZ_USERNAME}" -p "${AZ_PASSWORD}"
     RC=$?
     if [[ $RC -ne 0 ]] ; then
