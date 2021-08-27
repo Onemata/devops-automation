@@ -62,6 +62,10 @@
     {
       "name": "AZ_USERNAME",
       "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:az-username-80R6l9:${bamboo.TARGET_PROFILE}::"
+    },
+    {
+      "name": "AZ_SAS_TOKEN",
+      "valueFrom": "arn:aws:secretsmanager:us-west-2:620889225884:secret:az-sas-token-RPfiuB:${bamboo.TARGET_PROFILE}::"
     }
     ],
   "essential": true,

@@ -73,6 +73,10 @@ fValidateEnvironmentVariablesForAzurePlatform () {
         echo "Please set AZ_PASSWORD"
         exit 1
     fi
+    if [[ -z "${AZ_SAS_TOKEN}" ]] ; then
+        echo "Please set AZ_PASSWORD"
+        exit 1
+    fi
     if [[ -z "${AZ_ACCOUNT_NAME}" ]] ; then
         echo "Please set AZ_ACCOUNT_NAME"
         exit 1
@@ -245,7 +249,7 @@ fValidateAccessToTargetBucket () {
     elif [[ "${TARGET_PLATFORM}" == "azure" ]] ; then
         echo "Validating Access to target Azure bucket: ${bucket} for account: ${AZ_ACCOUNT_NAME}"
         ####  Cli for Azure
-        az storage blob list --account-name ${AZ_ACCOUNT_NAME} --container-name ${bucket} --output table --auth-mode login
+        az storage blob list --account-name ${AZ_ACCOUNT_NAME} --container-name ${bucket} --output table --sas-token "${AZ_SAS_TOKEN}"
         return_code=$?
     fi
     return $return_code
@@ -268,7 +272,7 @@ fValidateTargetObject () {
         read targetObjectSize date object < <(gsutil ls -l gs://${TARGET_BUCKET}/$target)
 
     elif [[ "${TARGET_PLATFORM}" == "azure" ]] ; then
-        targetObjectSize=`az storage blob list --account-name ${AZ_ACCOUNT_NAME} --container-name ${TARGET_BUCKET} --output tsv --auth-mode login --prefix "$target" --query "[*].[properties.contentLength]"`
+        targetObjectSize=`az storage blob list --account-name ${AZ_ACCOUNT_NAME} --container-name ${TARGET_BUCKET} --output tsv --sas-token "${AZ_SAS_TOKEN}" --prefix "$target" --query "[*].[properties.contentLength]"`
     fi
 
     if [[ $sourceObjectSize -eq $targetObjectSize ]] ; then
@@ -353,7 +357,7 @@ fCopyObject () {
         aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$source - | gsutil cp - gs://${TARGET_BUCKET}/$target
     elif [[ "${TARGET_PLATFORM}" == "azure" ]] ; then
         echo "Copying object to Azure Bucket"
-        aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$source - | az storage blob upload --account-name ${AZ_ACCOUNT_NAME} --file - --container-name ${TARGET_BUCKET} --name $target --auth-mode login
+        aws --profile AWS_SOURCE s3 cp s3://${AWS_BUCKET_SOURCE}/$source - | blobxfer upload --storage-account ${AZ_ACCOUNT_NAME} --remote-path "${TARGET_BUCKET}/$target" --sas "${AZ_SAS_TOKEN}" --local-path -
     fi
 }
 
